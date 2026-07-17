@@ -1,0 +1,2086 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>行业企业分布图谱</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@500;700;900&family=Noto+Sans+SC:wght@400;500;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#E8E3D6;
+    --paper-deep:#DFD9C8;
+    --ink:#20242F;
+    --ink-soft:#5B5A50;
+    --indigo:#1B2A4A;
+    --indigo-deep:#101B33;
+    --seal:#A23B3B;
+    --seal-deep:#7C2C2C;
+    --gold:#B98F1F;
+    --teal:#3E6B63;
+    --slate:#6E7480;
+    --line: rgba(27,42,74,0.18);
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:
+      repeating-linear-gradient(0deg, rgba(27,42,74,0.035) 0px, rgba(27,42,74,0.035) 1px, transparent 1px, transparent 28px),
+      var(--paper);
+    color:var(--ink);
+    font-family:"Noto Sans SC", sans-serif;
+    min-height:100vh;
+  }
+
+  .frame{
+    max-width:1280px;
+    margin:0 auto;
+    padding:36px 28px 60px;
+  }
+
+  /* ---------- Header ---------- */
+  .masthead{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-end;
+    border-bottom:3px solid var(--indigo);
+    padding-bottom:18px;
+    margin-bottom:8px;
+    gap:20px;
+    flex-wrap:wrap;
+  }
+  .masthead-title{
+    font-family:"Noto Serif SC", serif;
+    font-weight:900;
+    font-size:clamp(28px,4vw,44px);
+    letter-spacing:0.04em;
+    color:var(--indigo-deep);
+    line-height:1.1;
+  }
+  .masthead-title small{
+    display:block;
+    font-family:"Noto Sans SC",sans-serif;
+    font-weight:500;
+    font-size:13px;
+    letter-spacing:0.32em;
+    color:var(--seal);
+    margin-bottom:8px;
+  }
+  .masthead-meta{
+    font-family:"JetBrains Mono", monospace;
+    font-size:12px;
+    color:var(--ink-soft);
+    text-align:right;
+    line-height:1.8;
+  }
+  .masthead-meta .num{color:var(--indigo-deep); font-weight:700;}
+
+  .sub-rule{
+    display:flex;
+    justify-content:space-between;
+    font-size:11.5px;
+    color:var(--ink-soft);
+    letter-spacing:0.08em;
+    padding:10px 0 18px;
+    border-bottom:1px solid var(--line);
+    margin-bottom:0;
+  }
+
+  /* ---------- Tabs ---------- */
+  .tab-nav{
+    display:flex;
+    gap:0;
+    margin-bottom:28px;
+  }
+  .tab-btn{
+    font-family:"Noto Serif SC",serif;
+    font-weight:700;
+    font-size:14.5px;
+    letter-spacing:0.08em;
+    color:var(--ink-soft);
+    background:rgba(27,42,74,0.04);
+    border:1px solid var(--line);
+    border-bottom:none;
+    padding:12px 26px;
+    cursor:pointer;
+    margin-top:16px;
+    position:relative;
+    top:1px;
+  }
+  .tab-btn .en{
+    display:block;
+    font-family:"JetBrains Mono",monospace;
+    font-weight:400;
+    font-size:9.5px;
+    letter-spacing:0.14em;
+    color:var(--ink-soft);
+    margin-top:3px;
+  }
+  .tab-btn + .tab-btn{border-left:none;}
+  .tab-btn.active{
+    background:var(--paper);
+    color:var(--indigo-deep);
+    border:1px solid var(--indigo);
+    border-bottom:1px solid var(--paper);
+  }
+  .tab-btn.active .en{color:var(--seal);}
+  .tab-btn:hover:not(.active){color:var(--indigo-deep);}
+
+  .page.hidden{display:none;}
+
+  /* ---------- Layout ---------- */
+  .layout{
+    display:grid;
+    grid-template-columns:236px 1fr;
+    gap:0;
+    border:1px solid var(--line);
+    background:rgba(255,255,255,0.18);
+  }
+  @media (max-width:860px){
+    .layout{grid-template-columns:1fr;}
+  }
+
+  /* ---------- Sidebar index ---------- */
+  .index-panel{
+    border-right:1px solid var(--line);
+    background:rgba(16,27,51,0.03);
+  }
+  .index-head{
+    font-family:"Noto Serif SC",serif;
+    font-weight:700;
+    font-size:13px;
+    letter-spacing:0.18em;
+    color:var(--indigo-deep);
+    padding:16px 18px 12px;
+    border-bottom:1px solid var(--line);
+  }
+  .index-list{list-style:none; margin:0; padding:0;}
+  .index-item{
+    display:flex;
+    align-items:baseline;
+    gap:10px;
+    width:100%;
+    text-align:left;
+    padding:11px 18px;
+    border:0;
+    border-bottom:1px solid var(--line);
+    background:transparent;
+    cursor:pointer;
+    font-family:"Noto Sans SC",sans-serif;
+    font-size:14px;
+    color:var(--ink);
+    transition:background .15s ease, color .15s ease, padding-left .15s ease;
+  }
+  .index-item .idx-code{
+    font-family:"JetBrains Mono",monospace;
+    font-size:10.5px;
+    color:var(--ink-soft);
+    letter-spacing:0.03em;
+  }
+  .index-item:hover{background:rgba(162,59,59,0.07); padding-left:22px;}
+  .index-item.active{
+    background:var(--indigo-deep);
+    color:var(--paper);
+    padding-left:22px;
+  }
+  .index-item.active .idx-code{color:var(--gold);}
+
+  /* ---------- Main record ---------- */
+  .record{padding:30px 34px 40px;}
+
+  .record-head{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:24px;
+    margin-bottom:30px;
+    flex-wrap:wrap;
+  }
+  .record-title{
+    font-family:"Noto Serif SC",serif;
+    font-weight:900;
+    font-size:clamp(24px,3vw,34px);
+    color:var(--indigo-deep);
+  }
+  .record-title .tag{
+    display:block;
+    font-family:"Noto Sans SC",sans-serif;
+    font-weight:500;
+    font-size:12px;
+    letter-spacing:0.2em;
+    color:var(--ink-soft);
+    margin-top:6px;
+  }
+
+  /* seal / stamp */
+  .seal{
+    position:relative;
+    width:104px;
+    height:104px;
+    flex:none;
+    border-radius:50%;
+    border:3px solid var(--seal);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    transform:rotate(-9deg);
+    color:var(--seal);
+    mix-blend-mode:multiply;
+    opacity:0.88;
+  }
+  .seal::before{
+    content:"";
+    position:absolute;
+    inset:8px;
+    border:1px solid var(--seal);
+    border-radius:50%;
+  }
+  .seal-text{
+    font-family:"Noto Serif SC",serif;
+    font-weight:700;
+    text-align:center;
+    line-height:1.3;
+    letter-spacing:0.02em;
+    padding:0 6px;
+    word-break:break-all;
+  }
+
+  .panels{
+    display:grid;
+    grid-template-columns:340px 1fr;
+    gap:34px;
+  }
+  @media (max-width:760px){ .panels{grid-template-columns:1fr;} }
+
+  .panel-label{
+    font-family:"Noto Serif SC",serif;
+    font-weight:700;
+    font-size:15px;
+    color:var(--indigo-deep);
+    padding-bottom:8px;
+    border-bottom:1.5px solid var(--indigo);
+    margin-bottom:18px;
+    display:flex;
+    justify-content:space-between;
+    align-items:baseline;
+  }
+  .panel-label .n{
+    font-family:"JetBrains Mono",monospace;
+    font-size:11px;
+    color:var(--ink-soft);
+    font-weight:400;
+  }
+
+  /* ---------- Donut ---------- */
+  .donut-wrap{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:22px;
+  }
+  .donut{
+    position:relative;
+    width:210px;
+    height:210px;
+    border-radius:50%;
+  }
+  .donut-center{
+    position:absolute;
+    inset:34px;
+    border-radius:50%;
+    background:var(--paper);
+    box-shadow:0 0 0 1px var(--line) inset;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+  }
+  .donut-center .pct{
+    font-family:"JetBrains Mono",monospace;
+    font-weight:700;
+    font-size:26px;
+    color:var(--seal);
+  }
+  .donut-center .lbl{
+    font-size:11px;
+    color:var(--ink-soft);
+    letter-spacing:0.08em;
+    margin-top:2px;
+  }
+
+  .legend{width:100%; border-collapse:collapse;}
+  .legend td{
+    padding:6px 4px;
+    font-size:13px;
+    border-bottom:1px dotted var(--line);
+  }
+  .legend tr:last-child td{border-bottom:none;}
+  .legend .sw{
+    width:11px; height:11px; border-radius:2px; display:inline-block; margin-right:8px; vertical-align:-1px;
+  }
+  .legend .nm{color:var(--ink);}
+  .legend .val{
+    font-family:"JetBrains Mono",monospace;
+    text-align:right;
+    color:var(--indigo-deep);
+    font-weight:700;
+  }
+
+  /* ---------- City ranking ---------- */
+  .city-list{list-style:none; margin:0; padding:0;}
+  .city-row{
+    display:grid;
+    grid-template-columns:28px 64px 1fr 64px;
+    align-items:center;
+    gap:10px;
+    padding:6px 0;
+  }
+  .city-row .rank{
+    font-family:"JetBrains Mono",monospace;
+    font-size:11px;
+    color:var(--ink-soft);
+  }
+  .city-row .rank.top{color:var(--seal); font-weight:700;}
+  .city-row .name{
+    font-size:13.5px;
+    color:var(--ink);
+    white-space:nowrap;
+  }
+  .city-row .bartrack{
+    position:relative;
+    height:14px;
+    background:rgba(27,42,74,0.06);
+  }
+  .city-row .barfill{
+    position:absolute;
+    left:0; top:0; bottom:0;
+    background:linear-gradient(90deg, var(--indigo) 0%, var(--indigo-deep) 100%);
+  }
+  .city-row:nth-child(1) .barfill, .city-row:nth-child(2) .barfill, .city-row:nth-child(3) .barfill{
+    background:linear-gradient(90deg, var(--seal) 0%, var(--seal-deep) 100%);
+  }
+  .city-row .count{
+    font-family:"JetBrains Mono",monospace;
+    font-size:12px;
+    text-align:right;
+    color:var(--ink-soft);
+  }
+
+  .footnote{
+    margin-top:30px;
+    padding-top:14px;
+    border-top:1px solid var(--line);
+    font-size:11px;
+    color:var(--ink-soft);
+    letter-spacing:0.04em;
+  }
+
+  /* ---------- Salary page ---------- */
+  .curve-badge{
+    flex:none;
+    width:210px;
+    position:relative;
+  }
+  .curve-svg{display:block; width:100%; height:auto; overflow:visible;}
+  .curve-caption{
+    text-align:center;
+    font-family:"JetBrains Mono",monospace;
+    font-size:10px;
+    color:var(--ink-soft);
+    letter-spacing:0.1em;
+    margin-top:2px;
+  }
+  .curve-dot{cursor:pointer; transition:r .12s ease;}
+  .curve-hit{fill:transparent; cursor:pointer;}
+  .curve-tooltip{
+    position:absolute;
+    left:0; top:0;
+    pointer-events:none;
+    background:var(--indigo-deep);
+    color:var(--paper);
+    font-family:"JetBrains Mono",monospace;
+    font-size:11px;
+    line-height:1.5;
+    padding:6px 10px;
+    white-space:nowrap;
+    opacity:0;
+    transform:translate(-50%,-128%);
+    transition:opacity .12s ease;
+    z-index:5;
+    box-shadow:0 3px 8px rgba(16,27,51,0.3);
+  }
+  .curve-tooltip b{color:var(--gold); font-size:12.5px;}
+  .curve-tooltip.show{opacity:1;}
+  .curve-tooltip::after{
+    content:"";
+    position:absolute;
+    left:50%; bottom:-4px;
+    transform:translateX(-50%);
+    border:4px solid transparent;
+    border-top-color:var(--indigo-deep);
+  }
+
+  .stage-summary{width:100%; border-collapse:collapse;}
+  .stage-summary td{
+    padding:9px 4px;
+    font-size:13px;
+    border-bottom:1px dotted var(--line);
+    vertical-align:middle;
+  }
+  .stage-summary tr:last-child td{border-bottom:none;}
+  .stage-summary .snm{
+    font-family:"Noto Serif SC",serif;
+    font-weight:700;
+    color:var(--indigo-deep);
+    white-space:nowrap;
+    width:44px;
+  }
+  .stage-summary .sbar{position:relative;}
+  .stage-summary .sbartrack{
+    position:relative; height:12px; background:rgba(27,42,74,0.06);
+  }
+  .stage-summary .sbarfill{
+    position:absolute; left:0; top:0; bottom:0;
+    background:linear-gradient(90deg, var(--gold) 0%, var(--seal) 100%);
+  }
+  .stage-summary .sval{
+    font-family:"JetBrains Mono",monospace;
+    font-weight:700;
+    text-align:right;
+    color:var(--indigo-deep);
+    white-space:nowrap;
+    width:78px;
+  }
+
+  .stage-block{margin-bottom:22px;}
+  .stage-block:last-child{margin-bottom:0;}
+  .stage-block-head{
+    display:flex;
+    align-items:baseline;
+    gap:12px;
+    margin-bottom:9px;
+  }
+  .stage-block-head .sname{
+    font-family:"Noto Serif SC",serif;
+    font-weight:700;
+    font-size:15px;
+    color:var(--indigo-deep);
+  }
+  .stage-block-head .savg{
+    font-family:"JetBrains Mono",monospace;
+    font-size:12px;
+    color:var(--ink-soft);
+  }
+  .stage-block-head .savg b{color:var(--seal); font-weight:700;}
+
+  .tier-row{
+    display:grid;
+    grid-template-columns:76px 1fr 84px;
+    align-items:center;
+    gap:10px;
+    padding:4px 0;
+  }
+  .tier-row .tname{
+    font-size:12.5px;
+    color:var(--ink-soft);
+    white-space:nowrap;
+  }
+  .tier-row .ttrack{
+    position:relative; height:15px; background:rgba(27,42,74,0.06);
+  }
+  .tier-row .tfill{
+    position:absolute; left:0; top:0; bottom:0;
+  }
+  .tier-row.ordinary .tfill{background:linear-gradient(90deg, var(--indigo) 0%, var(--indigo-deep) 100%);}
+  .tier-row.key .tfill{background:linear-gradient(90deg, var(--seal) 0%, var(--seal-deep) 100%);}
+  .tier-row .tval{
+    font-family:"JetBrains Mono",monospace;
+    font-size:12px;
+    text-align:right;
+    color:var(--ink-soft);
+  }
+  .tier-legend{
+    display:flex;
+    gap:18px;
+    font-size:11px;
+    color:var(--ink-soft);
+    margin-top:16px;
+    padding-top:12px;
+    border-top:1px solid var(--line);
+  }
+  .tier-legend span{display:flex; align-items:center; gap:6px;}
+  .tier-legend .sw{width:10px; height:10px; border-radius:2px; display:inline-block;}
+
+  /* ---------- Dynamic / interactive additions ---------- */
+  .page{
+    transition:opacity .38s cubic-bezier(.4,0,.2,1), transform .38s cubic-bezier(.4,0,.2,1);
+    opacity:1;
+    transform:translateY(0);
+  }
+  .page.fade-out{opacity:0; transform:translateY(10px);}
+  .page.hidden{display:none;}
+
+  @keyframes recordEnter{
+    from{opacity:0; transform:translateY(10px);}
+    to{opacity:1; transform:translateY(0);}
+  }
+  .record.anim-in{animation:recordEnter .42s cubic-bezier(.4,0,.2,1);}
+
+  .index-item{transition:background .15s ease, color .15s ease, padding-left .15s ease;}
+
+  /* Donut SVG */
+  .donut-svg{width:210px; height:210px; display:block; overflow:visible;}
+  .donut-arc{
+    transition:stroke-dasharray .7s cubic-bezier(.4,0,.2,1), stroke-dashoffset .7s cubic-bezier(.4,0,.2,1), stroke-width .18s ease, opacity .18s ease;
+    cursor:pointer;
+  }
+  .donut-arc:hover, .donut-arc.hover{stroke-width:36; opacity:0.92;}
+  .donut-center{transition:transform .18s ease;}
+  .donut-center.pulse{transform:scale(1.06);}
+  .donut-center .pct{transition:color .15s ease;}
+
+  .donut-tooltip{
+    position:absolute;
+    pointer-events:none;
+    background:var(--indigo-deep);
+    color:var(--paper);
+    font-family:"JetBrains Mono",monospace;
+    font-size:11px;
+    line-height:1.5;
+    padding:6px 10px;
+    white-space:nowrap;
+    opacity:0;
+    transform:translate(-50%,-130%);
+    transition:opacity .12s ease;
+    z-index:6;
+    box-shadow:0 3px 8px rgba(16,27,51,0.3);
+  }
+  .donut-tooltip.show{opacity:1;}
+  .donut-tooltip b{color:var(--gold); font-size:12.5px;}
+
+  .legend tr{cursor:pointer; transition:background .15s ease;}
+  .legend tr:hover, .legend tr.hover{background:rgba(162,59,59,0.08);}
+  .legend .sw{transition:transform .15s ease;}
+  .legend tr:hover .sw, .legend tr.hover .sw{transform:scale(1.35);}
+
+  /* City bars */
+  .city-row .barfill{
+    width:0%;
+    transition:width .75s cubic-bezier(.25,.8,.3,1);
+  }
+  .city-row{
+    border-radius:2px;
+    transition:background .15s ease;
+  }
+  .city-row:hover{background:rgba(27,42,74,0.05);}
+  .city-row .count{transition:color .15s ease;}
+  .city-row:hover .count{color:var(--seal);}
+
+  /* Salary curve draw-in */
+  .curve-dot{opacity:0; transform-box:fill-box; transform-origin:center; animation:dotIn .45s cubic-bezier(.4,0,.2,1) forwards;}
+  @keyframes dotIn{
+    from{opacity:0; transform:scale(0);}
+    to{opacity:1; transform:scale(1);}
+  }
+  #curveSvg polyline{
+    transition:points .5s ease;
+  }
+  #curveSvg polygon{
+    opacity:0;
+    animation:fadeInSoft .5s ease forwards;
+  }
+  @keyframes fadeInSoft{ to{opacity:1;} }
+
+  /* Stage summary + tier bars */
+  .stage-summary .sbarfill{width:0%; transition:width .75s cubic-bezier(.25,.8,.3,1);}
+  .stage-summary tr{transition:background .15s ease;}
+  .stage-summary tr:hover{background:rgba(162,59,59,0.06);}
+  .tier-row .tfill{width:0%; transition:width .75s cubic-bezier(.25,.8,.3,1);}
+  .tier-row{transition:background .15s ease; border-radius:2px;}
+  .tier-row:hover{background:rgba(27,42,74,0.05);}
+
+  .stage-block{
+    opacity:0;
+    animation:blockIn .45s cubic-bezier(.4,0,.2,1) forwards;
+  }
+  @keyframes blockIn{
+    from{opacity:0; transform:translateY(8px);}
+    to{opacity:1; transform:translateY(0);}
+  }
+
+  /* ---------- Gov / recruitment page ---------- */
+  .gov-stats{
+    display:grid;
+    grid-template-columns:repeat(5,1fr);
+    border:1px solid var(--line);
+    background:rgba(16,27,51,0.03);
+    margin-bottom:30px;
+  }
+  .gov-stat{
+    padding:13px 16px;
+    border-right:1px solid var(--line);
+  }
+  .gov-stat:last-child{border-right:none;}
+  .gov-stat .k{
+    font-size:11px;
+    color:var(--ink-soft);
+    letter-spacing:0.12em;
+    margin-bottom:7px;
+  }
+  .gov-stat .v{
+    font-family:"JetBrains Mono",monospace;
+    font-weight:700;
+    font-size:19px;
+    color:var(--indigo-deep);
+  }
+  .gov-stat.ratio .v{color:var(--seal);}
+  @media (max-width:620px){ .gov-stats{grid-template-columns:repeat(2,1fr);} }
+
+  .gov-list{list-style:none; margin:0; padding:0;}
+  .gov-row{
+    display:grid;
+    grid-template-columns:28px minmax(90px,1.25fr) 1fr 60px;
+    align-items:center;
+    gap:10px;
+    padding:6px 0;
+    border-radius:2px;
+    transition:background .15s ease;
+  }
+  .gov-row:hover{background:rgba(27,42,74,0.05);}
+  .gov-row .rank{
+    font-family:"JetBrains Mono",monospace;
+    font-size:11px;
+    color:var(--ink-soft);
+  }
+  .gov-row .rank.top{color:var(--seal); font-weight:700;}
+  .gov-row .name{
+    font-size:13px;
+    color:var(--ink);
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+  }
+  .gov-row .bartrack{
+    position:relative;
+    height:14px;
+    background:rgba(27,42,74,0.06);
+  }
+  .gov-row .barfill{
+    position:absolute;
+    left:0; top:0; bottom:0;
+    background:linear-gradient(90deg, var(--indigo) 0%, var(--indigo-deep) 100%);
+    width:0%;
+    transition:width .75s cubic-bezier(.25,.8,.3,1);
+  }
+  .gov-row:nth-child(1) .barfill,
+  .gov-row:nth-child(2) .barfill,
+  .gov-row:nth-child(3) .barfill{
+    background:linear-gradient(90deg, var(--seal) 0%, var(--seal-deep) 100%);
+  }
+  .gov-row .count{
+    font-family:"JetBrains Mono",monospace;
+    font-size:12px;
+    text-align:right;
+    color:var(--ink-soft);
+    transition:color .15s ease;
+  }
+  .gov-row:hover .count{color:var(--seal);}
+  #govLegend .nm{white-space:nowrap;}
+
+  /* education / political sub-lists on the gov page */
+  #govEduList .gov-row{ grid-template-columns:28px 132px 1fr 64px; }
+  #govPolList .gov-row{ grid-template-columns:28px 128px 1fr 96px; }
+  #govEduList .gov-row .name, #govPolList .gov-row .name{ white-space:nowrap; }
+  .gov-row .count .sub{ color:var(--ink-soft); font-weight:400; margin-left:5px; }
+  @media (max-width:620px){
+    #govEduList .gov-row{ grid-template-columns:26px 110px 1fr 56px; }
+    #govPolList .gov-row{ grid-template-columns:26px 104px 1fr 88px; }
+  }
+
+  /* ---------- Pos / hot-position salary page ---------- */
+  .pos-sector{
+    font-family:"JetBrains Mono",monospace;
+    font-size:11.5px;
+    letter-spacing:0.06em;
+    color:var(--ink-soft);
+    border:1px solid var(--line);
+    background:rgba(16,27,51,0.03);
+    padding:10px 14px;
+    margin-bottom:26px;
+  }
+  .pos-sector b{color:var(--indigo-deep); font-weight:700;}
+
+  /* hot positions (job-hop increase) */
+  .hot-list{list-style:none; margin:0; padding:0;}
+  .hot-row{
+    padding:11px 0;
+    border-bottom:1px dotted var(--line);
+    border-radius:2px;
+    transition:background .15s ease;
+  }
+  .hot-row:last-child{border-bottom:none;}
+  .hot-row:hover{background:rgba(162,59,59,0.06);}
+  .hot-top{
+    display:flex;
+    align-items:baseline;
+    justify-content:space-between;
+    gap:10px;
+    margin-bottom:6px;
+  }
+  .hot-name{
+    font-family:"Noto Serif SC",serif;
+    font-weight:700;
+    font-size:14px;
+    color:var(--indigo-deep);
+  }
+  .hot-jump{
+    font-family:"JetBrains Mono",monospace;
+    font-weight:700;
+    font-size:13px;
+    color:var(--seal);
+    white-space:nowrap;
+  }
+  .hot-jump .up{font-size:10px; margin-right:1px;}
+  .hot-skill{
+    font-size:11.5px;
+    color:var(--ink-soft);
+    margin-bottom:7px;
+  }
+  .hot-track{
+    position:relative;
+    height:10px;
+    background:rgba(27,42,74,0.06);
+  }
+  .hot-fill{
+    position:absolute; left:0; top:0; bottom:0;
+    width:0%;
+    background:linear-gradient(90deg, var(--gold) 0%, var(--seal) 100%);
+    transition:width .75s cubic-bezier(.25,.8,.3,1);
+  }
+  .hot-empty{
+    font-size:12.5px;
+    color:var(--ink-soft);
+    padding:14px 0;
+    line-height:1.7;
+  }
+
+  /* annual base salary range (floating min–max bars) */
+  .pos-list{list-style:none; margin:0; padding:0;}
+  .pos-row{
+    display:grid;
+    grid-template-columns:96px 1fr 108px;
+    align-items:center;
+    gap:12px;
+    padding:8px 0;
+    border-radius:2px;
+    transition:background .15s ease;
+  }
+  .pos-row:hover{background:rgba(27,42,74,0.05);}
+  .pos-row .plvl{
+    font-size:13px;
+    color:var(--ink);
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+  }
+  .pos-track{
+    position:relative;
+    height:16px;
+    background:rgba(27,42,74,0.06);
+  }
+  .pos-range{
+    position:absolute; top:0; bottom:0;
+    left:0; width:0%;
+    background:linear-gradient(90deg, var(--indigo) 0%, var(--indigo-deep) 100%);
+    transition:left .7s cubic-bezier(.25,.8,.3,1), width .7s cubic-bezier(.25,.8,.3,1);
+  }
+  .pos-row:nth-child(1) .pos-range{
+    background:linear-gradient(90deg, var(--seal) 0%, var(--seal-deep) 100%);
+  }
+  .pos-val{
+    font-family:"JetBrains Mono",monospace;
+    font-size:12px;
+    text-align:right;
+    color:var(--indigo-deep);
+    font-weight:700;
+    white-space:nowrap;
+  }
+  .pos-axis{
+    display:flex;
+    justify-content:space-between;
+    font-family:"JetBrains Mono",monospace;
+    font-size:10px;
+    color:var(--ink-soft);
+    margin-top:8px;
+    padding-left:108px;
+    padding-right:120px;
+  }
+  .footnote a{color:var(--seal); text-decoration:none; border-bottom:1px solid rgba(162,59,59,0.4);}
+  .footnote a:hover{color:var(--seal-deep); border-bottom-color:var(--seal-deep);}
+
+  /* ---------- Region / province occupation-salary page (目录五) ---------- */
+  .law-stats{grid-template-columns:repeat(4,1fr);}
+  #lawCityList .gov-row{grid-template-columns:26px 76px 1fr 116px; cursor:pointer;}
+  #lawCityList .gov-row .name{white-space:nowrap;}
+  #lawCityList .count .sub{color:var(--ink-soft); font-weight:400; margin-left:7px;}
+  #lawCityList .gov-row.sel{background:rgba(27,42,74,0.09);}
+  #lawCityList .gov-row.sel .name{color:var(--indigo-deep); font-weight:700;}
+  #lawCityList .gov-row.sel .rank{color:var(--seal);}
+
+  .job-head{
+    display:grid; grid-template-columns:1fr 60px 88px 96px; gap:10px;
+    font-size:10.5px; letter-spacing:0.06em; color:var(--ink-soft);
+    padding:0 0 7px; border-bottom:1px solid var(--line); margin-bottom:2px;
+  }
+  .job-head .jc{text-align:right;}
+  .job-list{list-style:none; margin:0; padding:0;}
+  .job-row{
+    display:grid; grid-template-columns:1fr 60px 88px 96px; gap:10px;
+    align-items:center; padding:7px 0; border-bottom:1px dotted var(--line);
+    border-radius:2px; transition:background .15s ease;
+  }
+  .job-row:last-child{border-bottom:none;}
+  .job-row:hover{background:rgba(162,59,59,0.06);}
+  .job-row .jname{font-size:13px; color:var(--ink); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+  .job-row .jedu{
+    justify-self:end; font-size:10.5px; color:var(--indigo-deep);
+    background:rgba(27,42,74,0.08); padding:2px 7px; border-radius:2px; white-space:nowrap;
+  }
+  .job-row .jsal{font-family:"JetBrains Mono",monospace; font-size:12px; font-weight:700; text-align:right; color:var(--seal);}
+  .job-row .jdem{position:relative; height:16px;}
+  .job-row .jbar{position:absolute; left:0; top:0; bottom:0; width:0%; opacity:.16;
+    background:linear-gradient(90deg,var(--indigo) 0%,var(--indigo-deep) 100%);
+    transition:width .6s cubic-bezier(.25,.8,.3,1);}
+  .job-row .jcount{position:relative; display:block; text-align:right; line-height:16px;
+    font-family:"JetBrains Mono",monospace; font-size:12px; color:var(--ink-soft);}
+  .job-empty{font-size:12.5px; color:var(--ink-soft); padding:14px 0;}
+  @media (max-width:620px){
+    .law-stats{grid-template-columns:repeat(2,1fr);}
+    #lawCityList .gov-row{grid-template-columns:24px 56px 1fr 96px;}
+    .job-head, .job-row{grid-template-columns:1fr 50px 72px 74px;}
+  }
+</style>
+</head>
+<body>
+<div class="frame">
+
+  <div class="masthead">
+    <div class="masthead-title">
+      <small>企业名录 · 行业统计</small>
+      行业企业分布图谱
+    </div>
+    <div class="masthead-meta">
+      收录行业 <span class="num">15</span> 类　覆盖城市 <span class="num">36</span> 个<br>
+      数据维度：企业性质构成 · 城市企业数量分布
+    </div>
+  </div>
+  <div class="sub-rule">
+    <span>企业性质普查　×　城市分布统计　×　学历薪酬档案　×　国考招录档案　×　热门职位薪酬　×　省域职业薪酬</span>
+    <span id="todayTag"></span>
+  </div>
+
+  <div class="tab-nav">
+    <button class="tab-btn active" data-page="industry" id="tabIndustry">
+      企业分布图谱<span class="en">目录一 · 产业</span>
+    </button>
+    <button class="tab-btn" data-page="salary" id="tabSalary">
+      学历薪酬对照<span class="en">目录二 · 薪酬</span>
+    </button>
+    <button class="tab-btn" data-page="gov" id="tabGov">
+      国考招录分布<span class="en">目录三 · 招录</span>
+    </button>
+    <button class="tab-btn" data-page="pos" id="tabPos">
+      热门职位薪酬<span class="en">目录四 · 职位</span>
+    </button>
+    <button class="tab-btn" data-page="law" id="tabLaw">
+      省域职业薪酬<span class="en">目录五 · 区域</span>
+    </button>
+  </div>
+
+  <section class="page" id="page-industry">
+  <div class="layout">
+    <div class="index-panel">
+      <div class="index-head">行业索引</div>
+      <ul class="index-list" id="indexList"></ul>
+    </div>
+
+    <div class="record">
+      <div class="record-head">
+        <div class="record-title">
+          <span id="recTitle">—</span>
+          <span class="tag" id="recTag">产业档案</span>
+        </div>
+        <div class="seal">
+          <div class="seal-text" id="sealName">—</div>
+        </div>
+      </div>
+
+      <div class="panels">
+        <div>
+          <div class="panel-label">企业性质构成 <span class="n">性质占比</span></div>
+          <div class="donut-wrap">
+            <div class="donut" id="donut" style="position:relative;">
+              <svg class="donut-svg" id="donutSvg" viewBox="0 0 210 210"></svg>
+              <div class="donut-center" id="donutCenter">
+                <div class="pct" id="donutPct">—</div>
+                <div class="lbl" id="donutLbl">民营企业占比</div>
+              </div>
+              <div class="donut-tooltip" id="donutTooltip"></div>
+            </div>
+            <table class="legend" id="legendTable"></table>
+          </div>
+        </div>
+
+        <div>
+          <div class="panel-label">城市企业分布 <span class="n" id="cityCount">按数量排序</span></div>
+          <ul class="city-list" id="cityList"></ul>
+        </div>
+      </div>
+
+      <div class="footnote">
+        注：企业性质构成为该行业内各类型企业占比；城市分布按企业数量降序排列，柱长为相对同行业内最高城市之比例。<br>
+        数据来源：<a href="https://www.smartsalary.cn/" target="_blank" rel="noopener">薪智 · smartsalary.cn</a>
+      </div>
+    </div>
+  </div>
+  </section>
+
+  <section class="page hidden" id="page-salary">
+  <div class="layout">
+    <div class="index-panel">
+      <div class="index-head">职能索引</div>
+      <ul class="index-list" id="indexListSalary"></ul>
+    </div>
+
+    <div class="record">
+      <div class="record-head">
+        <div class="record-title">
+          <span id="salTitle">—</span>
+          <span class="tag" id="salTag">薪酬档案</span>
+        </div>
+        <div class="curve-badge">
+          <svg class="curve-svg" id="curveSvg" viewBox="0 0 210 100"></svg>
+          <div class="curve-tooltip" id="curveTooltip"></div>
+          <div class="curve-caption">学历 · 薪资成长曲线（悬停查看）</div>
+        </div>
+      </div>
+
+      <div class="panels">
+        <div>
+          <div class="panel-label">各学历月薪 <span class="n">月薪（元）</span></div>
+          <table class="stage-summary" id="stageSummary"></table>
+        </div>
+
+        <div>
+          <div class="panel-label">普通院校对比重点院校 <span class="n" id="tierNote">按学历分层对比</span></div>
+          <div id="tierBlocks"></div>
+          <div class="tier-legend">
+            <span><i class="sw" style="background:var(--indigo)"></i>普通院校</span>
+            <span><i class="sw" style="background:var(--seal)"></i>重点院校</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="footnote">
+        注：数据为各职能类型在不同学历层级下的平均薪资（元/月）；专科阶段暂不区分院校层次；本科、硕士、博士阶段按普通院校与重点院校分别统计，"月薪"为该学历层级不区分院校的整体平均值。<br>
+        数据来源：<a href="https://www.smartsalary.cn/" target="_blank" rel="noopener">薪智 · smartsalary.cn</a>
+      </div>
+    </div>
+  </div>
+  </section>
+
+  <section class="page hidden" id="page-gov">
+  <div class="layout">
+    <div class="index-panel">
+      <div class="index-head">省份索引</div>
+      <ul class="index-list" id="indexListGov"></ul>
+    </div>
+
+    <div class="record">
+      <div class="record-head">
+        <div class="record-title">
+          <span id="govTitle">—</span>
+          <span class="tag" id="govTag">国考招录档案</span>
+        </div>
+        <div class="seal">
+          <div class="seal-text" id="govSeal">—</div>
+        </div>
+      </div>
+
+      <div class="gov-stats" id="govStats"></div>
+
+      <div class="panels">
+        <div>
+          <div class="panel-label">招录机构构成 <span class="n">招录人数占比</span></div>
+          <div class="donut-wrap">
+            <div class="donut" id="govDonut" style="position:relative;">
+              <svg class="donut-svg" id="govDonutSvg" viewBox="0 0 210 210"></svg>
+              <div class="donut-center" id="govDonutCenter">
+                <div class="pct" id="govDonutPct">—</div>
+                <div class="lbl" id="govDonutLbl">招录占比</div>
+              </div>
+              <div class="donut-tooltip" id="govDonutTooltip"></div>
+            </div>
+            <table class="legend" id="govLegend"></table>
+          </div>
+        </div>
+
+        <div>
+          <div class="panel-label">机构报名热度 <span class="n" id="govOrgCount">按报名人数排序</span></div>
+          <ul class="gov-list" id="govList"></ul>
+        </div>
+      </div>
+
+      <div class="panels" style="margin-top:34px;">
+        <div>
+          <div class="panel-label">各学历招录数量 <span class="n" id="govEduNote">按人数排序</span></div>
+          <ul class="gov-list" id="govEduList"></ul>
+        </div>
+
+        <div>
+          <div class="panel-label">政治面貌构成 <span class="n" id="govPolNote">按招录人数</span></div>
+          <ul class="gov-list" id="govPolList"></ul>
+        </div>
+      </div>
+
+      <div class="footnote">
+        注：数据为2026年国家公务员考试各省（区、市）招录情况；"招录机构构成"按各招录机关计划录用人数占全省之比例统计，取前六家机关，其余合并为"其他"；"机构报名热度"按各机关报名人数降序排列，柱长为相对报名最多机关之比例。<br>
+        "各学历招录数量"为该省各学历要求下的招录人数总和，"政治面貌构成"为该省各政治面貌要求下的招录人数及占比；柱长均为相对该省最高项之比例。<br>
+        数据来源：<a href="https://zw.huatu.com/buweisearch/1.html" target="_blank" rel="noopener">华图教育 · 国考职位查询（zw.huatu.com）</a>
+      </div>
+    </div>
+  </div>
+  </section>
+
+  <section class="page hidden" id="page-pos">
+  <div class="layout">
+    <div class="index-panel">
+      <div class="index-head">热门方向索引</div>
+      <ul class="index-list" id="indexListPos"></ul>
+    </div>
+
+    <div class="record">
+      <div class="record-head">
+        <div class="record-title">
+          <span id="posTitle">—</span>
+          <span class="tag" id="posTag">热门职位薪酬档案</span>
+        </div>
+        <div class="seal">
+          <div class="seal-text" id="posSeal">—</div>
+        </div>
+      </div>
+
+      <div class="pos-sector" id="posSector"></div>
+
+      <div class="panels">
+        <div>
+          <div class="panel-label">热门职位 · 跳槽薪资涨幅 <span class="n">预计2026年</span></div>
+          <ul class="hot-list" id="hotList"></ul>
+          <div class="hot-empty" id="hotEmpty" style="display:none;">该方向本期未单列热门职位，参见右侧年度基本薪资范围。</div>
+        </div>
+
+        <div>
+          <div class="panel-label">年度基本薪资范围 <span class="n" id="posUnit">单位：万元 / 年</span></div>
+          <ul class="pos-list" id="posList"></ul>
+          <div class="pos-axis" id="posAxis"></div>
+        </div>
+      </div>
+
+      <div class="footnote">
+        注：薪资为年度基本工资范围（不含津贴、股票、奖金及其他福利），已由原始"千元"单位折算为"万元 / 年"；"跳槽薪资涨幅"为该热门职位在2026年跳槽预计可获得的薪资涨幅。数据收集于RGF自有人才库2025年1月至2026年1月期间，涵盖超过500,000名候选人。<br>
+        数据来源：<a href="https://www.rgf-professional.com.cn/zh/rgf-salary-watch-2026-mainland-china-cn" target="_blank" rel="noopener">RGF 薪酬观察 2026 · 中国大陆篇（www.rgf-professional.com.cn）</a>
+      </div>
+    </div>
+  </div>
+  </section>
+
+  <section class="page hidden" id="page-law">
+  <div class="layout">
+    <div class="index-panel">
+      <div class="index-head">省份索引</div>
+      <ul class="index-list" id="indexListLaw"></ul>
+    </div>
+
+    <div class="record">
+      <div class="record-head">
+        <div class="record-title">
+          <span id="lawTitle">—</span>
+          <span class="tag" id="lawTag">省域职业薪酬档案</span>
+        </div>
+        <div class="seal">
+          <div class="seal-text" id="lawSeal">区域</div>
+        </div>
+      </div>
+
+      <div class="gov-stats law-stats" id="lawStats"></div>
+
+      <div class="panels">
+        <div>
+          <div class="panel-label">城市招聘热度 <span class="n" id="lawCityCount">需求人数 · 点击查看岗位</span></div>
+          <ul class="gov-list" id="lawCityList"></ul>
+        </div>
+
+        <div>
+          <div class="panel-label">岗位薪酬明细 <span class="n" id="lawJobNote">—</span></div>
+          <div class="job-head">
+            <span>岗位</span><span class="jc">学历要求</span><span class="jc">平均月薪</span><span class="jc">招聘人数</span>
+          </div>
+          <ul class="job-list" id="lawJobList"></ul>
+          <div class="job-empty" id="lawJobEmpty" style="display:none;">该市暂无岗位明细。</div>
+        </div>
+      </div>
+
+      <div class="footnote">
+        注：数据依据智联招聘在招岗位统计，按工作城市归入所属省份；"岗位需求"为该省各城市招聘人数之和，"平均月薪"为按招聘人数加权的月薪均值（元/月）。左侧"城市招聘热度"按需求人数降序排列，柱长为相对省内需求最高城市之比例，角标为该市平均月薪；点击任一城市，右侧即展示该市招聘人数最多的岗位（最多十二项）及各岗位的平均月薪、学历要求与招聘人数。<br>
+        数据来源：<a href="https://www.zhaopin.com/" target="_blank" rel="noopener">智联招聘 · zhaopin.com</a>
+      </div>
+    </div>
+  </div>
+  </section>
+</div>
+
+<script>
+const DATA = {"信息技术业":{"code":4201000,"nature":[["民营",95.7],["国有",0.3],["上市公司",0.8],["合资",0.6],["外资",2.6]],"city":[["深圳",21920],["上海",16391],["北京",16103],["广州",15288],["成都",12580],["杭州",11488],["武汉",10347],["南京",9394],["西安",8273],["苏州",8215],["长沙",7837],["郑州",6930],["合肥",6772],["东莞",6763],["重庆",6723],["济南",6070],["福州",4772],["青岛",4565],["石家庄",4488],["天津",4406],["宁波",4280],["沈阳",4109],["南昌",4051],["佛山",3949],["厦门",3948],["昆明",3853],["无锡",3822],["南宁",3351],["贵阳",3210],["太原",3121],["长春",2792],["哈尔滨",2735],["大连",2571],["常州",2309],["嘉兴",1774],["海口",1660]]},"消费品行业":{"code":4202000,"nature":[["民营",94.5],["国有",0.1],["上市公司",0.6],["合资",1.1],["外资",3.7]],"city":[["广州",14196],["深圳",11924],["上海",10526],["成都",10349],["杭州",9308],["苏州",8057],["东莞",7937],["佛山",7091],["武汉",7059],["北京",6322],["长沙",6126],["青岛",6070],["南京",6039],["郑州",5980],["宁波",5854],["重庆",5354],["合肥",5251],["济南",5192],["西安",5085],["福州",4235],["无锡",4188],["沈阳",4042],["石家庄",3980],["天津",3917],["厦门",3461],["昆明",3264],["南昌",3187],["南宁",3112],["哈尔滨",3075],["嘉兴",3072],["贵阳",2899],["常州",2607],["太原",2397],["长春",2366],["大连",2326],["海口",1362]]},"金融行业":{"code":4203000,"nature":[["民营",80.2],["国有",4.7],["上市公司",11.2],["合资",2.3],["外资",1.6]],"city":[["上海",4227],["北京",3636],["深圳",2731],["广州",2010],["杭州",1808],["成都",1727],["南京",1456],["武汉",1414],["苏州",1237],["重庆",1185],["长沙",1130],["西安",1103],["济南",1073],["郑州",1040],["青岛",982],["合肥",952],["天津",927],["宁波",883],["福州",877],["佛山",784],["厦门",770],["无锡",752],["石家庄",719],["南昌",715],["东莞",688],["沈阳",670],["昆明",621],["大连",618],["太原",601],["南宁",564],["常州",517],["贵阳",498],["哈尔滨",490],["长春",477],["海口",418],["嘉兴",389]]},"医药行业":{"code":4204000,"nature":[["民营",95.0],["国有",0.2],["上市公司",1.1],["合资",1.4],["外资",2.3]],"city":[["北京",7152],["上海",7114],["广州",6701],["成都",5998],["武汉",5174],["杭州",5067],["南京",4673],["郑州",4406],["深圳",4345],["西安",4288],["长沙",4143],["重庆",4114],["济南",4061],["苏州",3654],["沈阳",3416],["合肥",3379],["石家庄",3344],["天津",3237],["昆明",3146],["南昌",2802],["南宁",2761],["福州",2727],["哈尔滨",2691],["青岛",2675],["长春",2640],["太原",2534],["贵阳",2343],["宁波",1781],["大连",1725],["无锡",1675],["厦门",1540],["东莞",1539],["佛山",1539],["海口",1325],["常州",1283],["嘉兴",899]]},"制造行业":{"code":4205000,"nature":[["民营",93.7],["国有",0.1],["上市公司",0.7],["合资",1.3],["外资",4.2]],"city":[["苏州",14363],["上海",13675],["深圳",12615],["东莞",10901],["广州",9000],["成都",7164],["武汉",6979],["北京",6715],["佛山",6626],["无锡",6289],["杭州",6205],["南京",6178],["西安",5646],["宁波",5331],["重庆",5314],["天津",5106],["青岛",5038],["长沙",4845],["合肥",4770],["郑州",4768],["常州",4512],["济南",4440],["沈阳",4023],["石家庄",3148],["厦门",2618],["福州",2618],["南昌",2418],["大连",2362],["嘉兴",2163],["昆明",2156],["长春",2115],["南宁",2112],["太原",2054],["哈尔滨",1889],["贵阳",1839],["海口",847]]},"汽车行业":{"code":4206000,"nature":[["民营",96.0],["国有",0.1],["上市公司",0.4],["合资",1.1],["外资",2.4]],"city":[["上海",4414],["广州",3589],["北京",2982],["成都",2909],["重庆",2901],["深圳",2899],["武汉",2807],["苏州",2559],["杭州",2317],["东莞",2147],["郑州",2031],["长沙",1990],["宁波",1888],["合肥",1871],["佛山",1820],["南京",1808],["西安",1802],["天津",1767],["青岛",1697],["沈阳",1594],["长春",1566],["济南",1344],["无锡",1288],["昆明",1227],["常州",1171],["南昌",1010],["南宁",1009],["贵阳",934],["哈尔滨",930],["石家庄",919],["福州",883],["厦门",873],["大连",834],["嘉兴",789],["太原",718],["海口",519]]},"半导体行业":{"code":4207000,"nature":[["民营",80.3],["国有",0.4],["上市公司",4.3],["合资",3.5],["外资",11.5]],"city":[["深圳",2316],["上海",1503],["北京",907],["苏州",906],["成都",672],["西安",534],["武汉",532],["南京",526],["杭州",503],["无锡",480],["合肥",473],["广州",419],["东莞",326],["重庆",322],["厦门",271],["青岛",250],["天津",249],["长沙",238],["宁波",227],["济南",156],["佛山",141],["郑州",131],["福州",124],["嘉兴",121],["常州",121],["南昌",106],["大连",104],["沈阳",104],["石家庄",98],["贵阳",66],["长春",65],["昆明",62],["哈尔滨",61],["太原",59],["南宁",55],["海口",24]]},"地产建筑行业":{"code":4208000,"nature":[["民营",98.3],["国有",0.4],["上市公司",0.2],["合资",0.3],["外资",0.7],["其他",0.1]],"city":[["上海",9892],["北京",9670],["成都",9452],["广州",7608],["武汉",7516],["深圳",7104],["西安",7061],["南京",5817],["杭州",5727],["苏州",5475],["郑州",5393],["重庆",5182],["天津",4426],["合肥",4404],["青岛",4360],["济南",4043],["长沙",4022],["昆明",3242],["沈阳",3226],["佛山",3028],["石家庄",3009],["无锡",2869],["东莞",2756],["宁波",2720],["南昌",2471],["太原",2460],["福州",2318],["贵阳",2151],["南宁",2094],["长春",2039],["大连",1827],["哈尔滨",1749],["常州",1694],["厦门",1626],["海口",1603],["嘉兴",1481]]},"能源化工业":{"code":4209000,"nature":[["民营",90.8],["国有",0.4],["上市公司",1.6],["合资",2.0],["外资",5.2]],"city":[["上海",3442],["深圳",3258],["东莞",2984],["广州",2800],["苏州",2649],["北京",2384],["成都",2079],["武汉",1862],["南京",1829],["西安",1796],["天津",1763],["杭州",1723],["佛山",1609],["青岛",1507],["郑州",1479],["无锡",1461],["宁波",1448],["合肥",1409],["重庆",1403],["济南",1380],["长沙",1342],["常州",1168],["沈阳",1127],["石家庄",1093],["昆明",908],["南昌",806],["太原",797],["福州",778],["厦门",757],["大连",710],["嘉兴",665],["南宁",656],["长春",633],["哈尔滨",616],["贵阳",600],["海口",400]]},"物流运输业":{"code":4210000,"nature":[["民营",96.5],["国有",0.4],["上市公司",0.2],["合资",0.6],["外资",2.3]],"city":[["上海",7240],["深圳",7153],["广州",5773],["北京",4038],["青岛",3708],["成都",3245],["宁波",3195],["苏州",3160],["武汉",2976],["杭州",2965],["天津",2916],["东莞",2795],["南京",2481],["郑州",2420],["重庆",2263],["西安",2252],["佛山",2117],["长沙",2104],["合肥",1907],["无锡",1839],["济南",1741],["厦门",1633],["沈阳",1578],["石家庄",1442],["大连",1396],["昆明",1255],["常州",1241],["福州",1237],["南昌",1056],["嘉兴",1039],["南宁",986],["哈尔滨",951],["长春",926],["贵阳",861],["太原",844],["海口",556]]},"专业服务业":{"code":4211000,"nature":[["民营",97.9],["国有",0.2],["合资",0.2],["外资",1.7]],"city":[["北京",12507],["上海",12249],["深圳",9343],["广州",9015],["成都",8326],["武汉",7111],["杭州",6520],["苏州",6432],["南京",5645],["西安",5583],["郑州",5360],["长沙",5058],["重庆",5030],["合肥",4885],["天津",4629],["青岛",4558],["济南",4474],["东莞",3941],["无锡",3455],["宁波",3428],["佛山",3352],["沈阳",3296],["昆明",3242],["石家庄",3117],["南昌",3013],["厦门",2663],["常州",2648],["贵阳",2555],["福州",2462],["太原",2460],["大连",2270],["长春",2268],["南宁",2241],["哈尔滨",1889],["嘉兴",1869],["海口",1234]]},"休闲服务业":{"code":4212000,"nature":[["民营",98.6],["国有",0.2],["合资",0.3],["外资",0.9]],"city":[["北京",10992],["成都",10594],["深圳",10436],["上海",10131],["广州",8219],["重庆",7997],["杭州",7612],["武汉",7606],["长沙",6392],["西安",6202],["苏州",5889],["南京",5547],["青岛",5483],["郑州",5413],["东莞",4623],["沈阳",4589],["合肥",4514],["天津",4411],["济南",4286],["宁波",3993],["南宁",3876],["昆明",3784],["无锡",3499],["佛山",3456],["哈尔滨",3315],["长春",3221],["厦门",3154],["福州",3040],["大连",2969],["贵阳",2872],["石家庄",2814],["南昌",2521],["太原",2496],["常州",2246],["海口",2026],["嘉兴",1986]]},"文化传媒业":{"code":4213000,"nature":[["民营",99.0],["国有",0.2],["上市公司",0.1],["合资",0.2],["外资",0.5]],"city":[["北京",8972],["上海",6446],["广州",5042],["深圳",4388],["成都",4277],["杭州",3855],["武汉",3348],["重庆",2886],["郑州",2767],["南京",2702],["长沙",2687],["西安",2563],["苏州",2124],["青岛",1877],["济南",1859],["合肥",1825],["沈阳",1641],["东莞",1626],["天津",1581],["石家庄",1569],["佛山",1534],["昆明",1498],["宁波",1317],["厦门",1198],["南昌",1169],["南宁",1166],["太原",1132],["长春",1126],["福州",1106],["无锡",1097],["哈尔滨",1056],["大连",925],["贵阳",901],["常州",693],["海口",563],["嘉兴",546]]},"教育行业":{"code":4214000,"nature":[["民营",99.6],["国有",0.1],["上市公司",0.2],["外资",0.1]],"city":[["成都",720],["深圳",674],["北京",628],["上海",626],["广州",591],["南京",555],["天津",540],["武汉",534],["杭州",507],["苏州",506],["重庆",477],["西安",453],["长沙",448],["青岛",446],["济南",379],["郑州",357],["宁波",335],["东莞",333],["长春",299],["无锡",291],["昆明",268],["佛山",264],["大连",243],["沈阳",236],["合肥",229],["石家庄",224],["南昌",202],["常州",199],["哈尔滨",196],["福州",168],["南宁",159],["贵阳",152],["嘉兴",150],["太原",141],["海口",139],["厦门",96]]},"其他行业":{"code":4215000,"nature":[["民营",96.6],["国有",0.4],["上市公司",0.6],["合资",1.0],["外资",1.3],["其他",0.1]],"city":[["北京",3271],["上海",3085],["成都",3037],["广州",2797],["武汉",2315],["深圳",2282],["南京",2127],["郑州",2069],["杭州",2050],["西安",2035],["苏州",1959],["长沙",1778],["重庆",1690],["济南",1592],["合肥",1550],["青岛",1473],["昆明",1352],["石家庄",1291],["天津",1254],["无锡",1112],["沈阳",1098],["东莞",1036],["福州",973],["佛山",972],["南宁",966],["太原",959],["南昌",953],["哈尔滨",940],["宁波",864],["贵阳",830],["长春",794],["常州",685],["厦门",623],["大连",583],["海口",544],["嘉兴",482]]}}
+;
+
+const NATURE_COLOR = {
+  "民营":"#A23B3B",
+  "国有":"#1B2A4A",
+  "上市公司":"#B98F1F",
+  "合资":"#3E6B63",
+  "外资":"#6E7480",
+  "其他":"#8B8577"
+};
+
+const industries = Object.keys(DATA);
+const indexList = document.getElementById('indexList');
+
+industries.forEach((name, i) => {
+  const li = document.createElement('li');
+  const btn = document.createElement('button');
+  btn.className = 'index-item';
+  btn.dataset.name = name;
+  btn.innerHTML = `<span class="idx-code">${String(i+1).padStart(2,'0')}</span><span>${name}</span>`;
+  btn.addEventListener('click', () => render(name));
+  li.appendChild(btn);
+  indexList.appendChild(li);
+});
+
+function setActive(name){
+  document.querySelectorAll('.index-item').forEach(el=>{
+    el.classList.toggle('active', el.dataset.name === name);
+  });
+}
+
+const NATURE_ORDER = ["民营","国有","上市公司","合资","外资","其他"];
+const DONUT_R = 90;
+const DONUT_C = 2 * Math.PI * DONUT_R;
+let donutBuilt = false;
+
+function buildDonut(nature){
+  const map = {};
+  nature.forEach(([n,v]) => { map[n] = v; });
+
+  const svg = document.getElementById('donutSvg');
+  const tooltip = document.getElementById('donutTooltip');
+
+  if(!donutBuilt){
+    // build once: track ring + one arc per fixed category, order stays stable so
+    // CSS transitions can smoothly morph the dasharray/dashoffset between industries
+    let html = `<circle cx="105" cy="105" r="${DONUT_R}" fill="none" stroke="rgba(27,42,74,0.06)" stroke-width="30"/>`;
+    html += `<g transform="rotate(-90 105 105)">`;
+    NATURE_ORDER.forEach(n => {
+      html += `<circle class="donut-arc" data-nature="${n}" cx="105" cy="105" r="${DONUT_R}" fill="none" stroke="${NATURE_COLOR[n]}" stroke-width="30" stroke-dasharray="0 ${DONUT_C.toFixed(2)}" stroke-dashoffset="0" stroke-linecap="butt"/>`;
+    });
+    html += `</g>`;
+    svg.innerHTML = html;
+    donutBuilt = true;
+
+    svg.querySelectorAll('.donut-arc').forEach(arc => {
+      arc.addEventListener('mouseenter', () => highlightNature(arc.dataset.nature, arc));
+      arc.addEventListener('mouseleave', () => unhighlightNature());
+    });
+  }
+
+  let acc = 0;
+  NATURE_ORDER.forEach(n => {
+    const v = map[n] || 0;
+    const arc = svg.querySelector(`.donut-arc[data-nature="${n}"]`);
+    const len = DONUT_C * v / 100;
+    const offset = -(acc / 100 * DONUT_C);
+    arc.setAttribute('stroke-dasharray', `${len.toFixed(2)} ${(DONUT_C - len).toFixed(2)}`);
+    arc.setAttribute('stroke-dashoffset', offset.toFixed(2));
+    arc.dataset.value = v.toFixed(1);
+    acc += v;
+  });
+}
+
+function highlightNature(n, arcEl){
+  document.querySelectorAll('.donut-arc').forEach(el => el.classList.toggle('hover', el === arcEl || el.dataset.nature === n));
+  document.querySelectorAll('#legendTable tr').forEach(tr => tr.classList.toggle('hover', tr.dataset.nature === n));
+
+  const v = arcEl ? arcEl.dataset.value : null;
+  if(v !== null){
+    const donutCenter = document.getElementById('donutCenter');
+    document.getElementById('donutPct').textContent = Number(v).toFixed(1) + '%';
+    document.getElementById('donutLbl').textContent = n + '企业占比';
+    donutCenter.classList.add('pulse');
+
+    const tooltip = document.getElementById('donutTooltip');
+    tooltip.innerHTML = `${n} · <b>${Number(v).toFixed(1)}%</b>`;
+    tooltip.style.left = '105px';
+    tooltip.style.top = '30px';
+    tooltip.classList.add('show');
+  }
+}
+
+function unhighlightNature(){
+  document.querySelectorAll('.donut-arc').forEach(el => el.classList.remove('hover'));
+  document.querySelectorAll('#legendTable tr').forEach(tr => tr.classList.remove('hover'));
+  document.getElementById('donutCenter').classList.remove('pulse');
+  document.getElementById('donutTooltip').classList.remove('show');
+  // restore the top-share display
+  const rec = DATA[document.querySelector('.index-item.active')?.dataset.name];
+  if(rec){
+    const top = rec.nature.slice().sort((a,b)=>b[1]-a[1])[0];
+    document.getElementById('donutPct').textContent = top[1].toFixed(1) + '%';
+    document.getElementById('donutLbl').textContent = top[0] + '企业占比';
+  }
+}
+
+function animateNumber(el, from, to, duration, fmt){
+  const start = performance.now();
+  function step(now){
+    const t = Math.min((now - start) / duration, 1);
+    const eased = 1 - Math.pow(1 - t, 3);
+    const val = from + (to - from) * eased;
+    el.textContent = fmt ? fmt(val) : Math.round(val).toLocaleString();
+    if(t < 1) requestAnimationFrame(step);
+  }
+  requestAnimationFrame(step);
+}
+
+function playRecordEnter(){
+  const record = document.querySelector('#page-industry .record');
+  record.classList.remove('anim-in');
+  void record.offsetWidth;
+  record.classList.add('anim-in');
+}
+
+function render(name){
+  const rec = DATA[name];
+  setActive(name);
+  playRecordEnter();
+
+  document.getElementById('recTitle').textContent = name;
+  document.getElementById('recTag').textContent = '产业档案';
+  const sealEl = document.getElementById('sealName');
+  sealEl.textContent = name;
+  const len = name.length;
+  const sealFont = len <= 4 ? 17 : len === 5 ? 14 : len === 6 ? 12 : 10.5;
+  sealEl.style.fontSize = sealFont + 'px';
+
+  buildDonut(rec.nature);
+  const top = rec.nature.slice().sort((a,b)=>b[1]-a[1])[0];
+  document.getElementById('donutPct').textContent = top[1].toFixed(1) + '%';
+  document.getElementById('donutLbl').textContent = top[0] + '企业占比';
+
+  const legendTable = document.getElementById('legendTable');
+  legendTable.innerHTML = '';
+  rec.nature.slice().sort((a,b)=>b[1]-a[1]).forEach(([n,v])=>{
+    const tr = document.createElement('tr');
+    tr.dataset.nature = n;
+    tr.innerHTML = `<td><span class="sw" style="background:${NATURE_COLOR[n]||'#999'}"></span><span class="nm">${n}</span></td><td class="val">${v.toFixed(1)}%</td>`;
+    tr.addEventListener('mouseenter', () => highlightNature(n, document.querySelector(`.donut-arc[data-nature="${n}"]`)));
+    tr.addEventListener('mouseleave', unhighlightNature);
+    legendTable.appendChild(tr);
+  });
+
+  const cityList = document.getElementById('cityList');
+  cityList.innerHTML = '';
+  const max = rec.city[0][1];
+  document.getElementById('cityCount').textContent = `共 ${rec.city.length} 城 · 按数量排序`;
+  rec.city.forEach(([city, cnt], i) => {
+    const row = document.createElement('li');
+    row.className = 'city-row';
+    const pct = (cnt / max * 100).toFixed(1);
+    row.innerHTML = `
+      <span class="rank ${i<3?'top':''}">${String(i+1).padStart(2,'0')}</span>
+      <span class="name">${city}</span>
+      <span class="bartrack"><span class="barfill" data-pct="${pct}" style="width:0%"></span></span>
+      <span class="count" data-target="${cnt}">0</span>
+    `;
+    cityList.appendChild(row);
+  });
+
+  // trigger bar + counter animations after the rows exist in the DOM
+  requestAnimationFrame(() => {
+    cityList.querySelectorAll('.barfill').forEach((el, i) => {
+      setTimeout(() => { el.style.width = el.dataset.pct + '%'; }, i * 12);
+    });
+    cityList.querySelectorAll('.count').forEach((el, i) => {
+      const target = Number(el.dataset.target);
+      setTimeout(() => animateNumber(el, 0, target, 650), i * 12);
+    });
+  });
+}
+
+document.getElementById('todayTag').textContent = new Date().toLocaleDateString('zh-CN', {year:'numeric', month:'2-digit', day:'2-digit'}).replace(/\//g,'.');
+
+render(industries[0]);
+
+/* ================= Salary page ================= */
+const SALARY_DATA = {"IT类":[{"stage":"专科","avg":6432.0,"items":[]},{"stage":"本科","avg":7623.0,"items":[{"tier":"普通院校","val":6812.0},{"tier":"重点院校","val":9460.0}]},{"stage":"硕士","avg":12254.0,"items":[{"tier":"普通院校","val":11088.0},{"tier":"重点院校","val":14929.0}]}],"研发类":[{"stage":"专科","avg":5745.0,"items":[]},{"stage":"本科","avg":7217.0,"items":[{"tier":"普通院校","val":6425.0},{"tier":"重点院校","val":8947.0}]},{"stage":"硕士","avg":10293.0,"items":[{"tier":"普通院校","val":8903.0},{"tier":"重点院校","val":12576.0}]},{"stage":"博士","avg":21971.0,"items":[{"tier":"普通院校","val":20364.0},{"tier":"重点院校","val":26071.0}]}],"金融类":[{"stage":"专科","avg":6133.0,"items":[]},{"stage":"本科","avg":7008.0,"items":[{"tier":"普通院校","val":6257.0},{"tier":"重点院校","val":8662.0}]}],"传媒类":[{"stage":"专科","avg":5776.0,"items":[]},{"stage":"本科","avg":7322.0,"items":[{"tier":"普通院校","val":6612.0},{"tier":"重点院校","val":8773.0}]}],"服务类":[{"stage":"专科","avg":6155.0,"items":[]},{"stage":"本科","avg":7549.0,"items":[{"tier":"普通院校","val":6697.0},{"tier":"重点院校","val":9383.0}]}],"工程类":[{"stage":"专科","avg":5786.0,"items":[]},{"stage":"本科","avg":6976.0,"items":[{"tier":"普通院校","val":6230.0},{"tier":"重点院校","val":8507.0}]},{"stage":"硕士","avg":10939.0,"items":[{"tier":"普通院校","val":9732.0},{"tier":"重点院校","val":13120.0}]},{"stage":"博士","avg":20700.0,"items":[{"tier":"普通院校","val":19665.0},{"tier":"重点院校","val":22846.0}]}],"生产类":[{"stage":"专科","avg":5554.0,"items":[]},{"stage":"本科","avg":6700.0,"items":[{"tier":"普通院校","val":5979.0},{"tier":"重点院校","val":8182.0}]},{"stage":"硕士","avg":10574.0,"items":[{"tier":"普通院校","val":9651.0},{"tier":"重点院校","val":13356.0}]}],"市场类":[{"stage":"专科","avg":5688.0,"items":[]},{"stage":"本科","avg":7009.0,"items":[{"tier":"普通院校","val":6236.0},{"tier":"重点院校","val":8616.0}]},{"stage":"硕士","avg":11319.0,"items":[{"tier":"普通院校","val":10533.0},{"tier":"重点院校","val":13905.0}]}],"销售类":[{"stage":"专科","avg":6336.0,"items":[]},{"stage":"本科","avg":7141.0,"items":[{"tier":"普通院校","val":6410.0},{"tier":"重点院校","val":8866.0}]},{"stage":"硕士","avg":11445.0,"items":[{"tier":"普通院校","val":10614.0},{"tier":"重点院校","val":13918.0}]}],"客服类":[{"stage":"专科","avg":5465.0,"items":[]}],"支持类":[{"stage":"专科","avg":5505.0,"items":[]},{"stage":"本科","avg":6968.0,"items":[{"tier":"普通院校","val":6204.0},{"tier":"重点院校","val":8577.0}]},{"stage":"硕士","avg":9555.0,"items":[{"tier":"普通院校","val":8608.0},{"tier":"重点院校","val":11621.0}]}]};
+const functions = Object.keys(SALARY_DATA);
+const indexListSalary = document.getElementById('indexListSalary');
+
+functions.forEach((name, i) => {
+  const li = document.createElement('li');
+  const btn = document.createElement('button');
+  btn.className = 'index-item';
+  btn.dataset.name = name;
+  btn.innerHTML = `<span class="idx-code">${String(i+1).padStart(2,'0')}</span><span>${name}</span>`;
+  btn.addEventListener('click', () => renderSalary(name));
+  li.appendChild(btn);
+  indexListSalary.appendChild(li);
+});
+
+function setActiveSalary(name){
+  indexListSalary.querySelectorAll('.index-item').forEach(el=>{
+    el.classList.toggle('active', el.dataset.name === name);
+  });
+}
+
+function buildCurve(stages){
+  const W = 210, H = 100, padL = 10, padR = 10, padT = 14, padB = 20;
+  const vals = stages.map(s => s.avg);
+  const max = Math.max(...vals), min = Math.min(...vals);
+  const span = Math.max(max - min, 1);
+  const stepX = (W - padL - padR) / Math.max(stages.length - 1, 1);
+
+  const pts = stages.map((s, i) => {
+    const x = padL + stepX * i;
+    const y = padT + (1 - (s.avg - min) / span) * (H - padT - padB);
+    return {x, y, s};
+  });
+
+  const line = pts.map(p => `${p.x.toFixed(1)},${p.y.toFixed(1)}`).join(' ');
+  const area = `${padL},${H-padB} ${line} ${pts[pts.length-1].x.toFixed(1)},${H-padB}`;
+
+  let svg = `<polygon points="${area}" fill="rgba(162,59,59,0.12)"/>`;
+  svg += `<polyline id="curveLine" points="${line}" fill="none" stroke="#A23B3B" stroke-width="1.6"/>`;
+  pts.forEach((p, i) => {
+    svg += `<circle class="curve-dot" data-i="${i}" style="animation-delay:${0.35 + i*0.08}s" cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="2.6" fill="#101B33"/>`;
+    svg += `<circle class="curve-hit" data-i="${i}" cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="9"/>`;
+    svg += `<text x="${p.x.toFixed(1)}" y="${H-5}" font-size="8.5" text-anchor="middle" fill="#5B5A50" font-family="Noto Sans SC, sans-serif">${p.s.stage}</text>`;
+  });
+  return {svg, pts};
+}
+
+function animateCurveDraw(){
+  const line = document.getElementById('curveLine');
+  if(!line || !line.getTotalLength) return;
+  if(line.getClientRects().length === 0) return; // page not visible yet, skip (no layout box to measure)
+  const len = line.getTotalLength();
+  line.style.transition = 'none';
+  line.style.strokeDasharray = len;
+  line.style.strokeDashoffset = len;
+  void line.getBoundingClientRect();
+  line.style.transition = 'stroke-dashoffset .7s cubic-bezier(.4,0,.2,1)';
+  requestAnimationFrame(() => { line.style.strokeDashoffset = 0; });
+}
+
+function bindCurveInteraction(pts){
+  const svgEl = document.getElementById('curveSvg');
+  const tip = document.getElementById('curveTooltip');
+
+  function showTip(p){
+    tip.innerHTML = `${p.s.stage} · 月薪 <b>¥${Math.round(p.s.avg).toLocaleString()}</b>`;
+    tip.style.left = p.x + 'px';
+    tip.style.top = p.y + 'px';
+    tip.classList.add('show');
+    svgEl.querySelectorAll('.curve-dot').forEach(el=>{
+      el.setAttribute('r', el.dataset.i === String(p.i) ? '4' : '2.6');
+    });
+  }
+  function hideTip(){
+    tip.classList.remove('show');
+    svgEl.querySelectorAll('.curve-dot').forEach(el => el.setAttribute('r','2.6'));
+  }
+
+  svgEl.querySelectorAll('.curve-hit').forEach(hit => {
+    const i = Number(hit.dataset.i);
+    const p = pts[i];
+    p.i = i;
+    hit.addEventListener('mouseenter', () => showTip(p));
+    hit.addEventListener('mouseleave', hideTip);
+    hit.addEventListener('touchstart', (e) => { e.preventDefault(); showTip(p); }, {passive:false});
+  });
+  svgEl.addEventListener('mouseleave', hideTip);
+}
+
+function playSalaryRecordEnter(){
+  const record = document.querySelector('#page-salary .record');
+  record.classList.remove('anim-in');
+  void record.offsetWidth;
+  record.classList.add('anim-in');
+}
+
+function renderSalary(name){
+  const stages = SALARY_DATA[name];
+  setActiveSalary(name);
+  playSalaryRecordEnter();
+
+  document.getElementById('salTitle').textContent = name;
+  document.getElementById('salTag').textContent = '薪酬档案 · 共' + stages.length + '个学历阶段';
+
+  const curve = buildCurve(stages);
+  document.getElementById('curveSvg').innerHTML = curve.svg;
+  bindCurveInteraction(curve.pts);
+  requestAnimationFrame(animateCurveDraw);
+
+  const maxAvg = Math.max(...stages.map(s => s.avg));
+  const summary = document.getElementById('stageSummary');
+  summary.innerHTML = '';
+  stages.forEach(s => {
+    const pct = (s.avg / maxAvg * 100).toFixed(1);
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td class="snm">${s.stage}</td>
+      <td class="sbar"><div class="sbartrack"><div class="sbarfill" data-pct="${pct}" style="width:0%"></div></div></td>
+      <td class="sval">¥<span class="count-val" data-target="${Math.round(s.avg)}">0</span></td>
+    `;
+    summary.appendChild(tr);
+  });
+
+  const allVals = stages.flatMap(s => [s.avg, ...s.items.map(it => it.val)]);
+  const maxAll = Math.max(...allVals);
+  const tierBlocks = document.getElementById('tierBlocks');
+  tierBlocks.innerHTML = '';
+  document.getElementById('tierNote').textContent = `共 ${stages.length} 个学历阶段`;
+
+  stages.forEach((s, bi) => {
+    const block = document.createElement('div');
+    block.className = 'stage-block';
+    block.style.animationDelay = (bi * 0.07) + 's';
+    let rows = '';
+    if(s.items.length){
+      s.items.forEach(it => {
+        const cls = it.tier === '普通院校' ? 'ordinary' : 'key';
+        const pct = (it.val / maxAll * 100).toFixed(1);
+        rows += `
+          <div class="tier-row ${cls}">
+            <span class="tname">${it.tier}</span>
+            <span class="ttrack"><span class="tfill" data-pct="${pct}" style="width:0%"></span></span>
+            <span class="tval">¥${Math.round(it.val).toLocaleString()}</span>
+          </div>`;
+      });
+    } else {
+      const pct = (s.avg / maxAll * 100).toFixed(1);
+      rows = `
+        <div class="tier-row ordinary">
+          <span class="tname">不区分院校</span>
+          <span class="ttrack"><span class="tfill" data-pct="${pct}" style="width:0%"></span></span>
+          <span class="tval">¥${Math.round(s.avg).toLocaleString()}</span>
+        </div>`;
+    }
+    block.innerHTML = `
+      <div class="stage-block-head">
+        <span class="sname">${s.stage}</span>
+        <span class="savg">月薪 <b>¥${Math.round(s.avg).toLocaleString()}</b></span>
+      </div>
+      ${rows}
+    `;
+    tierBlocks.appendChild(block);
+  });
+
+  // trigger bar-fill and counter animations once elements are in the DOM
+  requestAnimationFrame(() => {
+    document.querySelectorAll('#stageSummary .sbarfill').forEach((el, i) => {
+      setTimeout(() => { el.style.width = el.dataset.pct + '%'; }, i * 40);
+    });
+    document.querySelectorAll('#stageSummary .count-val').forEach((el, i) => {
+      const target = Number(el.dataset.target);
+      setTimeout(() => animateNumber(el, 0, target, 650), i * 40);
+    });
+    document.querySelectorAll('#tierBlocks .tfill').forEach((el, i) => {
+      setTimeout(() => { el.style.width = el.dataset.pct + '%'; }, 150 + i * 40);
+    });
+  });
+}
+
+renderSalary(functions[0]);
+
+/* ================= Gov recruitment page ================= */
+const GOV_DATA = {"北京":{"code":4301000,"totals":{"pos":762,"recruits":1461,"applicants":223659,"approved":193172,"ratio":"4508:1"},"orgs":[["国家税务总局北京市税务局",86,200,40402],["外交部",20,101,12050],["商务部",14,60,10112],["国家知识产权局",29,64,8626],["人力资源和社会保障部",9,13,8507],["国家发展和改革委员会",29,46,8196],["教育部",8,14,7903],["国家林业和草原局",15,16,7793],["中国残联",4,4,6727],["公安部",88,136,6521],["中央办公厅",11,21,5920],["生态环境部",7,10,5326],["国家体育总局",3,3,5014],["国家医疗保障局",1,3,4431],["中央直属机关事务管理局",8,10,4172],["国家市场监督管理总局",11,16,3171],["中国贸促会",20,25,2992],["财政部",14,31,2971],["文化和旅游部",4,5,2964],["北京海关",19,44,2914],["致公党中央",2,2,2755],["国家统计局",8,9,2621],["北京铁路公安局",15,31,2615],["国家文物局",2,2,2438],["中国人民银行",13,44,2431],["国家民族事务委员会",4,4,1953],["中国证券监督管理委员会",16,19,1931],["国家机关事务管理局",4,8,1858],["北京出入境边防检查总站",21,50,1814],["国务院发展研究中心",5,9,1734],["农业农村部",9,9,1717],["中国地方志工作办公室",1,2,1633],["全国妇联",6,7,1598],["国家卫生健康委员会",11,11,1557],["中国工程院",4,4,1377],["中央台办",1,5,1344],["海关总署",3,4,1342],["国家药品监督管理局",4,4,1296],["中国藏学研究中心",2,2,1294],["全国人大",2,2,1251],["国务院国有资产监督管理委员会",5,6,1181],["民进中央",3,3,1109],["全国总工会",9,9,1033],["中国人民银行北京市分行",9,19,1032],["国家金融监督管理总局",9,60,1014],["中央组织部",2,4,959],["民政部",2,3,957],["司法部",17,25,933],["审计署",5,15,909],["中央党史和文献研究院",3,6,906],["司法部燕城监狱",3,5,837],["国家金融监督管理总局北京监管局",6,40,836],["首都机场公安局",5,16,807],["民建中央",2,2,799],["国家国防科技工业局",11,18,786],["欧美同学会",2,2,757],["农工党中央",2,2,704],["工业和信息化部",6,6,683],["北京市地震局",2,2,648],["中国民用航空局",3,3,646],["科学技术部",8,10,633],["国家粮食和物资储备局",2,2,547],["中央档案馆国家档案局",3,3,541],["国家国际发展合作署",2,2,509],["中国法学会",2,2,499],["中央金融办、中央金融工委",3,3,488],["国家林业和草原局驻北京专员办",2,2,472],["国务院参事室",2,2,452],["国家粮食和物资储备局北京局",2,2,452],["国家能源局",6,7,436],["生态环境部华北督察局",1,3,433],["中国民用航空局华北地区管理局",3,3,424],["中国侨联",1,1,411],["北京市邮政管理局",5,5,397],["国家统计局北京调查总队",7,11,396],["中央对外联络部",9,16,375],["台盟中央",1,1,345],["国家邮政局",3,3,343],["中华全国供销合作总社",2,2,342],["应急管理部",3,3,333],["全国政协",4,4,306],["中国证券监督管理委员会北京监管局",4,12,306],["外交学会",1,5,300],["中国老龄协会",2,2,260],["全国友协",8,8,252],["国家疾病预防控制局",1,1,251],["水利部",2,6,249],["国家矿山安全监察局",2,3,212],["国家移民管理局常备力量第三总队",5,10,194],["国家移民管理局常备力量第一总队",2,4,194],["国家外汇管理局",4,4,191],["国家铁路局",1,1,171],["中国气象局",4,4,170],["北京市通信管理局",1,1,170],["交通运输部",3,3,162],["财政部北京监管局",1,1,123],["司法部法律援助中心",2,2,107],["生态环境部华北核与辐射安全监督站",1,2,91],["中国计划生育协会",1,1,85],["中国外文局",1,1,73],["国家能源局华北监管局",1,2,66],["中国作协",1,1,38],["中国民用航空华北地区管理局公安局",1,1,19],["国家移民管理局",1,1,16],["中国地质调查局",1,1,10],["北京市公安局特勤局",1,1,8]]},"河北":{"code":4302000,"totals":{"pos":1015,"recruits":1766,"applicants":123739,"approved":110410,"ratio":"905:1"},"orgs":[["国家税务总局河北省税务局",641,1300,92360],["国家金融监督管理总局河北监管局",157,183,12102],["中国人民银行河北省分行",48,82,5954],["北京铁路公安局",11,22,2442],["石家庄海关",36,40,2053],["河北出入境边防检查总站",9,10,1730],["水利部海河水利委员会",9,9,1535],["国家统计局河北调查总队",33,33,1498],["河北省邮政管理局",3,3,1314],["河北海事局",31,40,975],["河北省气象局",24,24,821],["太原铁路公安局",2,3,361],["中国证券监督管理委员会河北监管局",4,6,199],["国家粮食和物资储备局河北局",2,2,161],["财政部河北监管局",1,1,121],["国家矿山安全监察局河北局",4,8,113]]},"河南":{"code":4303000,"totals":{"pos":1117,"recruits":1691,"applicants":180686,"approved":156531,"ratio":"2634:1"},"orgs":[["国家税务总局河南省税务局",803,1300,124420],["水利部黄河水利委员会",44,45,20702],["中国人民银行河南省分行",62,108,7211],["郑州铁路公安局",6,10,7196],["国家金融监督管理总局河南监管局",124,132,7016],["国家统计局河南调查总队",31,32,5924],["郑州海关",19,22,2956],["国家粮食和物资储备局河南局",2,2,2231],["中国证券监督管理委员会河南监管局",2,4,620],["武汉铁路公安局",5,14,574],["生态环境部黄河流域生态环境监督管理局",1,1,419],["财政部河南监管局",1,1,398],["河南省气象局",7,7,248],["审计署驻郑州特派员办事处",2,5,196],["河南省地震局",1,1,161],["水利部海河水利委员会",2,2,136],["国家能源局河南监管办公室",2,2,131],["河南出入境边防检查总站",2,2,96],["中国民用航空中南地区管理局公安局",1,1,51]]},"湖北":{"code":4304000,"totals":{"pos":787,"recruits":1483,"applicants":112656,"approved":100702,"ratio":"1417:1"},"orgs":[["国家税务总局湖北省税务局",547,1200,92470],["国家金融监督管理总局湖北监管局",53,57,4282],["中国人民银行湖北省分行",49,59,2743],["武汉海关",25,25,2502],["国家统计局湖北调查总队",23,25,1866],["武汉铁路公安局",9,21,1624],["长江海事局",20,23,1549],["长江航务管理局",4,4,1405],["水利部长江水利委员会",10,12,923],["湖北出入境边防检查总站",7,10,844],["财政部湖北监管局",1,1,526],["审计署驻武汉特派员办事处",5,6,435],["国家自然资源督察武汉局",1,2,352],["湖北省邮政管理局",4,4,307],["湖北省通信管理局",1,1,231],["中国证券监督管理委员会湖北监管局",5,10,193],["湖北省气象局",10,10,178],["长江航运公安局",6,6,78],["国家能源局华中监管局",2,2,50],["武汉铁路监督管理局",2,2,49],["国家矿山安全监察局湖北局",2,2,42],["中国民用航空局中南地区管理局",1,1,7]]},"安徽":{"code":4305000,"totals":{"pos":551,"recruits":1150,"applicants":95266,"approved":83155,"ratio":"828:1"},"orgs":[["国家税务总局安徽省税务局",364,900,77663],["中国人民银行安徽省分行",64,102,5167],["国家金融监督管理总局安徽监管局",61,64,4635],["上海铁路公安局",6,12,2430],["国家统计局安徽调查总队",13,13,2215],["财政部安徽监管局",1,1,828],["安徽省气象局",8,8,535],["水利部淮河水利委员会",4,9,496],["长江航运公安局",5,6,352],["中国证券监督管理委员会安徽监管局",3,8,261],["生态环境部淮河流域生态环境监督管理局",1,1,195],["安徽省邮政管理局",2,2,129],["国家林业和草原局驻合肥专员办",1,1,128],["安徽出入境边防检查总站",3,3,115],["长江海事局",8,8,80],["国家矿山安全监察局安徽局",1,3,23],["合肥海关",6,9,14]]},"福建":{"code":4306000,"totals":{"pos":679,"recruits":1327,"applicants":129728,"approved":113758,"ratio":"1618:1"},"orgs":[["国家税务总局福建省税务局",367,900,98342],["厦门海关",74,88,6070],["国家税务总局厦门市税务局",29,30,5766],["福州海关",35,60,5080],["国家金融监督管理总局福建监管局",54,58,3718],["福建省气象局",6,6,2520],["中国人民银行福建省分行",37,90,2359],["国家统计局福建调查总队",23,23,2154],["福建海事局",16,16,1052],["厦门出入境边防检查总站",9,9,557],["南昌铁路公安局",3,4,500],["中国人民银行厦门市分行",3,12,246],["财政部厦门监管局",1,2,197],["中国证券监督管理委员会厦门监管局",4,8,188],["国家金融监督管理总局厦门监管局",3,4,175],["中国证券监督管理委员会福建监管局",4,5,168],["福州海关缉私局",2,3,142],["福建省地震局",1,1,134],["国家林业和草原局驻福州专员办",1,1,105],["国家矿山安全监察局福建局",1,1,98],["财政部福建监管局",1,1,83],["厦门海关缉私局",3,3,41],["国家能源局福建监管办公室",1,1,22],["中国民用航空局华东地区管理局",1,1,11]]},"浙江":{"code":4307000,"totals":{"pos":754,"recruits":1311,"applicants":91927,"approved":77183,"ratio":"1332:1"},"orgs":[["国家税务总局浙江省税务局",388,700,46662],["国家税务总局宁波市税务局",82,160,16325],["中国人民银行浙江省分行",59,131,7628],["杭州海关",56,60,4954],["国家金融监督管理总局浙江监管局",49,57,4291],["浙江海事局",52,73,2936],["国家粮食和物资储备局浙江局",2,2,1862],["宁波海关",16,33,1837],["国家统计局浙江调查总队",13,13,1524],["浙江出入境边防检查总站",7,7,1007],["中国证券监督管理委员会浙江监管局",4,20,674],["财政部浙江监管局",2,2,606],["中国人民银行宁波市分行",8,22,538],["浙江省邮政管理局",3,3,296],["中国证券监督管理委员会宁波监管局",4,8,238],["国家金融监督管理总局宁波监管局",2,11,225],["国家能源局浙江监管办公室",1,2,140],["宁波海关缉私局",3,4,96],["杭州海关缉私局",3,3,88]]},"广东":{"code":4308000,"totals":{"pos":1869,"recruits":3310,"applicants":311843,"approved":257372,"ratio":"2347:1"},"orgs":[["国家税务总局广东省税务局",557,1300,135520],["深圳海关",207,359,45952],["拱北海关",86,230,15207],["广州海关",113,190,14643],["广东海事局",162,167,13761],["中国人民银行广东省分行",102,172,12314],["国家税务总局深圳市税务局",89,100,12044],["黄埔海关",136,190,11665],["国家统计局广东调查总队",38,40,8620],["广州铁路公安局",12,22,8390],["深圳出入境边防检查总站",19,40,5629],["珠海出入境边防检查总站",23,55,4748],["国家金融监督管理总局广东监管局",79,82,3726],["湛江海关",28,49,2943],["江门海关",51,60,2566],["汕头海关",47,50,2135],["广东省邮政管理局",6,6,1663],["中国证券监督管理委员会深圳监管局",6,25,1326],["中国证券监督管理委员会广东监管局",9,15,1115],["广州出入境边防检查总站",15,16,852],["深圳海关缉私局",7,25,761],["中国人民银行深圳市分行",5,15,654],["自然资源部南海局",2,2,636],["生态环境部华南督察局",1,2,461],["国家粮食和物资储备局广东局",1,1,450],["中国证券监督管理委员会深圳证券监管专员办事处",3,4,439],["广东省地震局",1,1,424],["国家能源局南方监管局",1,1,357],["广东省通信管理局",1,1,341],["生态环境部华南核与辐射安全监督站",4,4,336],["广东省气象局",10,10,250],["黄埔海关缉私局",4,13,236],["水利部珠江水利委员会",2,4,218],["汕头海关缉私局",6,6,209],["拱北海关缉私局",5,5,199],["国家林业和草原局驻广州专员办",2,2,196],["国家自然资源督察广州局",1,1,157],["审计署驻广州特派员办事处",1,8,145],["广州海关缉私局",4,5,139],["深圳海事局",10,15,136],["中国民用航空局中南地区管理局",5,5,88],["审计署驻深圳特派员办事处",2,4,86],["中国民用航空中南地区管理局公安局",2,3,41],["公安部",1,1,27],["江门海关缉私局",2,3,23],["广东省公安厅特勤局",1,1,15]]},"广西":{"code":4309000,"totals":{"pos":748,"recruits":1358,"applicants":153379,"approved":128666,"ratio":"598:1"},"orgs":[["国家税务总局广西壮族自治区税务局",392,900,123203],["南宁海关",73,114,11018],["国家金融监督管理总局广西监管局",113,125,8149],["中国人民银行广西壮族自治区分行",68,96,4027],["广西壮族自治区邮政管理局",4,4,1107],["广西出入境边防检查总站",30,39,1105],["南宁铁路公安局",8,15,958],["国家移民管理局东兴遣返中心",12,12,837],["国家统计局广西调查总队",7,7,777],["中国证券监督管理委员会广西监管局",3,3,577],["国家粮食和物资储备局广西局",1,1,561],["广西壮族自治区气象局",5,5,548],["广西海事局",21,25,353],["南宁海关缉私局",7,8,52],["国家矿山安全监察局广西局",1,1,45],["财政部广西监管局",1,1,39],["中国民用航空局中南地区管理局",1,1,16],["广西壮族自治区公安厅特勤局",1,1,7]]},"海南":{"code":4310000,"totals":{"pos":235,"recruits":361,"applicants":22554,"approved":18661,"ratio":"976:1"},"orgs":[["海口海关",80,150,8898],["国家税务总局海南省税务局",47,60,3790],["中国人民银行海南省分行",25,52,3322],["海口出入境边防检查总站",19,19,1927],["国家统计局海南调查总队",4,4,1560],["海南海事局",39,50,1239],["中国证券监督管理委员会海南监管局",3,5,812],["国家金融监督管理总局海南监管局",7,10,468],["海南测绘地理信息局",1,1,238],["海南省邮政管理局",2,2,118],["海口海关缉私局",4,4,88],["海南省地震局",1,1,50],["中国民用航空中南地区管理局公安局",1,1,28],["中国民用航空局中南地区管理局",2,2,16]]},"重庆":{"code":4311000,"totals":{"pos":401,"recruits":571,"applicants":69734,"approved":57009,"ratio":"977:1"},"orgs":[["国家税务总局重庆市税务局",269,400,55711],["中国人民银行重庆市分行",47,66,4522],["国家统计局重庆调查总队",15,15,2138],["国家金融监督管理总局重庆监管局",17,20,2135],["成都铁路公安局",14,23,1992],["重庆海关",11,12,1203],["国家税务总局驻重庆特派员办事处",3,4,875],["中国证券监督管理委员会重庆监管局",4,8,452],["重庆市气象局",10,10,165],["审计署驻重庆特派员办事处",2,4,150],["财政部重庆监管局",1,1,146],["长江海事局",5,5,143],["重庆海关缉私局",2,2,94],["重庆市公安局特勤局",1,1,8]]},"云南":{"code":4312000,"totals":{"pos":1083,"recruits":1459,"applicants":162731,"approved":145316,"ratio":"6034:1"},"orgs":[["国家税务总局云南省税务局",742,1000,116893],["国家统计局云南调查总队",13,13,9425],["国家移民管理局瑞丽遣返中心",13,15,7802],["云南出入境边防检查总站",67,120,6462],["中国人民银行云南省分行",79,127,6206],["昆明海关",32,35,4020],["国家粮食和物资储备局云南局",4,4,3941],["国家金融监督管理总局云南监管局",91,97,3410],["云南省气象局",18,18,1718],["云南省邮政管理局",4,4,1338],["中国证券监督管理委员会云南监管局",3,4,621],["云南省地震局",1,1,277],["国家移民管理局常备力量第二总队",10,11,176],["国家能源局云南监管办公室",1,2,168],["中国民用航空局西南地区管理局",1,1,166],["审计署驻昆明特派员办事处",1,4,68],["昆明海关缉私局",3,3,40]]},"甘肃":{"code":4313000,"totals":{"pos":361,"recruits":718,"applicants":59458,"approved":51050,"ratio":"644:1"},"orgs":[["国家税务总局甘肃省税务局",197,500,43724],["中国人民银行甘肃省分行",59,93,5665],["甘肃省气象局",10,10,2251],["国家统计局甘肃调查总队",17,18,2056],["国家金融监督管理总局甘肃监管局",44,58,1716],["兰州海关",13,14,1314],["兰州铁路公安局",10,10,983],["财政部甘肃监管局",1,2,839],["中国民用航空局西北地区管理局",2,2,327],["生态环境部西北核与辐射安全监督站",1,1,145],["兰州铁路监督管理局",1,1,137],["甘肃省地震局",2,2,135],["中国证券监督管理委员会甘肃监管局",3,6,95],["国家能源局甘肃监管办公室",1,1,71]]},"新疆":{"code":4314000,"totals":{"pos":646,"recruits":1538,"applicants":87409,"approved":78314,"ratio":"1224:1"},"orgs":[["国家税务总局新疆维吾尔自治区税务局",263,700,38729],["新疆出入境边防检查总站",92,300,10527],["中国人民银行新疆维吾尔自治区分行",101,206,9464],["国家金融监督管理总局新疆监管局",62,183,6883],["乌鲁木齐海关",33,35,5387],["新疆维吾尔自治区气象局",25,25,4559],["国家统计局新疆调查总队",32,32,4447],["乌鲁木齐铁路公安局",16,25,2298],["新疆维吾尔自治区邮政管理局",8,8,1751],["国家林业和草原局驻乌鲁木齐专员办",1,1,1111],["国家能源局新疆监管办公室",1,2,810],["国家统计局新疆生产建设兵团调查总队",4,4,617],["中国证券监督管理委员会新疆监管局",3,10,308],["中国民用航空局新疆管理局",3,3,252],["新疆维吾尔自治区通信管理局",1,1,149],["乌鲁木齐海关缉私局",1,3,117]]},"西藏":{"code":4315000,"totals":{"pos":200,"recruits":317,"applicants":38873,"approved":34040,"ratio":"1165:1"},"orgs":[["西藏出入境边防检查总站",86,180,24887],["国家税务总局西藏自治区税务局",54,60,7107],["中国人民银行西藏自治区分行",30,41,2608],["拉萨海关",10,12,2406],["西藏自治区气象局",9,9,654],["西藏自治区邮政管理局",3,3,531],["中国证券监督管理委员会西藏监管局",3,5,302],["国家金融监督管理总局西藏监管局",4,5,278],["西藏自治区通信管理局",1,2,100]]},"天津":{"code":4316000,"totals":{"pos":221,"recruits":435,"applicants":48169,"approved":41802,"ratio":"1629:1"},"orgs":[["国家税务总局天津市税务局",112,240,30067],["北京铁路公安局",11,27,4246],["天津海关",31,60,3726],["水利部海河水利委员会",10,11,2158],["天津出入境边防检查总站",7,12,2028],["中国人民银行天津市分行",12,33,1720],["中国证券监督管理委员会天津监管局",3,8,715],["财政部天津监管局",2,2,702],["生态环境部海河流域北海海域生态环境监督管理局",3,4,653],["天津市气象局",3,3,594],["审计署京津冀特派员办事处",2,8,404],["天津市地震局",1,2,389],["国家统计局天津调查总队",10,10,341],["国家金融监督管理总局天津监管局",4,4,183],["天津海关缉私局",3,4,83],["天津海事局",5,5,79],["天津市邮政管理局",1,1,61],["中国民用航空局华北地区管理局",1,1,20]]},"山西":{"code":4317000,"totals":{"pos":547,"recruits":1150,"applicants":125949,"approved":117025,"ratio":"828:1"},"orgs":[["国家税务总局山西省税务局",345,900,104748],["国家金融监督管理总局山西监管局",99,107,6290],["中国人民银行山西省分行",45,62,3620],["国家矿山安全监察局山西局",9,20,3472],["国家粮食和物资储备局山西局",3,3,2106],["国家统计局山西调查总队",18,18,1382],["山西省气象局",5,5,1060],["太原铁路公安局",6,9,758],["山西省邮政管理局",4,4,723],["财政部山西监管局",1,2,709],["中国证券监督管理委员会山西监管局",4,6,404],["水利部黄河水利委员会",1,1,263],["山西省通信管理局",1,1,192],["审计署驻太原特派员办事处",3,6,164],["国家能源局山西监管办公室",1,1,41],["山西出入境边防检查总站",1,2,10],["太原海关",1,3,7]]},"内蒙古":{"code":4318000,"totals":{"pos":714,"recruits":1245,"applicants":59854,"approved":53134,"ratio":"830:1"},"orgs":[["国家税务总局内蒙古自治区税务局",384,800,40159],["国家金融监督管理总局内蒙古监管局",123,136,4506],["中国人民银行内蒙古自治区分行",61,110,4086],["满洲里海关",17,20,3153],["内蒙古出入境边防检查总站",50,80,1534],["呼和浩特海关",31,33,1484],["国家统计局内蒙古调查总队",17,17,1287],["哈尔滨铁路公安局",4,19,1153],["中国证券监督管理委员会内蒙古监管局",4,7,890],["呼和浩特铁路公安局",3,3,443],["国家粮食和物资储备局内蒙古局",1,1,341],["国家林业和草原局驻内蒙古专员办",1,1,291],["内蒙古自治区邮政管理局",3,3,175],["内蒙古自治区气象局",8,8,100],["财政部内蒙古监管局",2,2,74],["内蒙古自治区地震局",1,1,71],["水利部松辽水利委员会",1,1,68],["满洲里海关缉私局",2,2,23],["呼和浩特海关缉私局",1,1,16]]},"辽宁":{"code":4319000,"totals":{"pos":814,"recruits":1679,"applicants":106431,"approved":91873,"ratio":"880:1"},"orgs":[["国家税务总局辽宁省税务局",409,1100,61157],["国家税务总局大连市税务局",101,160,16000],["大连海关",60,70,7231],["中国人民银行辽宁省分行",61,86,4099],["国家统计局辽宁调查总队",18,18,3955],["沈阳海关",20,22,3229],["国家金融监督管理总局辽宁监管局",37,82,1826],["中国证券监督管理委员会大连监管局",4,5,1167],["沈阳铁路公安局",7,16,1057],["中国民用航空局东北地区管理局",6,6,1007],["辽宁省邮政管理局",6,6,923],["国家粮食和物资储备局辽宁局",3,3,869],["中国人民银行大连市分行",13,16,812],["辽宁海事局",23,32,740],["国家自然资源督察沈阳局",2,2,645],["中国证券监督管理委员会辽宁监管局",6,8,358],["生态环境部东北督察局",1,2,249],["辽宁出入境边防检查总站",10,10,240],["国家金融监督管理总局大连监管局",4,5,149],["财政部辽宁监管局",1,2,149],["辽宁省气象局",9,9,147],["国家移民管理局长春遣返中心",3,5,126],["国家矿山安全监察局辽宁局",5,9,125],["生态环境部东北核与辐射安全监督站",1,1,112],["大连海关缉私局",3,3,44],["辽宁省公安厅特勤局",1,1,15]]},"吉林":{"code":4320000,"totals":{"pos":559,"recruits":1253,"applicants":87856,"approved":80172,"ratio":"1113:1"},"orgs":[["国家税务总局吉林省税务局",318,900,67815],["吉林出入境边防检查总站",88,150,6994],["中国人民银行吉林省分行",55,82,3615],["东北虎豹国家公园管理局",9,9,2564],["长春海关",29,31,1959],["国家金融监督管理总局吉林监管局",34,45,1607],["国家移民管理局长春遣返中心",7,10,1558],["审计署驻长春特派员办事处",3,5,419],["国家粮食和物资储备局吉林局",1,1,400],["国家矿山安全监察局吉林局",3,6,220],["吉林省地震局",1,1,218],["中国证券监督管理委员会吉林监管局",3,5,172],["吉林省邮政管理局",2,2,136],["水利部松辽水利委员会",1,1,94],["长春海关缉私局",4,4,45],["中国民用航空局东北地区管理局",1,1,40]]},"黑龙江":{"code":4321000,"totals":{"pos":617,"recruits":1187,"applicants":74706,"approved":67913,"ratio":"2382:1"},"orgs":[["国家税务总局黑龙江省税务局",377,900,52939],["黑龙江出入境边防检查总站",27,28,5421],["国家金融监督管理总局黑龙江监管局",82,97,5292],["哈尔滨海关",47,55,3394],["中国人民银行黑龙江省分行",30,42,2391],["国家统计局黑龙江调查总队",14,14,2172],["黑龙江海事局",16,16,889],["国家粮食和物资储备局黑龙江局",2,2,512],["东北虎豹国家公园管理局",1,1,471],["黑龙江省地震局",1,1,344],["中国证券监督管理委员会黑龙江监管局",2,5,287],["黑龙江省邮政管理局",6,6,146],["水利部松辽水利委员会",1,1,90],["审计署驻哈尔滨特派员办事处",1,9,83],["国家林业和草原局驻黑龙江省专员办",1,1,67],["国家林业和草原局驻大兴安岭专员办",2,2,60],["哈尔滨海关缉私局",3,3,57],["国家矿山安全监察局黑龙江局",3,3,49],["财政部黑龙江监管局",1,1,42]]},"上海":{"code":4322000,"totals":{"pos":489,"recruits":743,"applicants":78312,"approved":63413,"ratio":"865:1"},"orgs":[["国家税务总局上海市税务局",295,450,61284],["上海海关",95,118,4200],["上海海事局",38,65,1777],["国家粮食和物资储备局上海局",3,3,1562],["生态环境部华东核与辐射安全监督站",3,3,1147],["国家统计局上海调查总队",3,3,1142],["国家自然资源督察上海局",1,1,1073],["水利部太湖流域管理局",7,7,899],["中国浦东干部学院",2,4,777],["中国人民银行上海总部",4,12,750],["上海出入境边防检查总站",3,9,594],["中国证券监督管理委员会上海证券监管专员办事处",3,6,547],["生态环境部太湖流域东海海域生态环境监督管理局",2,4,526],["中国证券监督管理委员会上海监管局",7,28,503],["财政部上海监管局",1,2,368],["上海市邮政管理局",2,2,214],["自然资源部东海局",2,2,190],["审计署驻上海特派员办事处",2,5,181],["农业农村部",1,1,118],["国家能源局华东监管局",1,1,101],["国家金融监督管理总局上海监管局",1,3,91],["上海铁路监督管理局",3,3,70],["上海海关缉私局",3,3,61],["长江航运公安局",1,2,55],["中国民用航空局华东地区管理局",3,3,45],["中国民用航空华东地区管理局公安局",1,1,25],["上海市公安局特勤局",1,1,9],["上海市气象局",1,1,3]]},"江苏":{"code":4323000,"totals":{"pos":937,"recruits":1662,"applicants":105871,"approved":95328,"ratio":"1606:1"},"orgs":[["国家税务总局江苏省税务局",560,1200,70027],["南京海关",129,150,11052],["国家金融监督管理总局江苏监管局",109,117,8237],["中国人民银行江苏省分行",46,81,4140],["国家统计局江苏调查总队",8,8,2905],["中央档案馆国家档案局",3,3,2172],["江苏海事局",30,37,1779],["财政部江苏监管局",1,1,1644],["水利部淮河水利委员会",8,9,779],["国家粮食和物资储备局江苏局",1,1,728],["中国证券监督管理委员会江苏监管局",5,16,469],["江苏省气象局",13,13,464],["江苏出入境边防检查总站",3,3,354],["国家自然资源督察南京局",1,1,249],["连云港海事局",9,9,243],["江苏省邮政管理局",4,4,225],["江苏省地震局",1,1,207],["南京海关缉私局",4,6,130],["国家能源局江苏监管办公室",1,1,53],["江苏省公安厅特勤局",1,1,14]]},"山东":{"code":4324000,"totals":{"pos":1233,"recruits":2271,"applicants":193072,"approved":173621,"ratio":"1969:1"},"orgs":[["国家税务总局山东省税务局",658,1500,135832],["国家税务总局青岛市税务局",99,150,14186],["水利部黄河水利委员会",35,36,12329],["济南铁路公安局",8,16,6854],["中国人民银行山东省分行",83,134,5897],["青岛海关",72,89,5206],["国家金融监督管理总局山东监管局",131,161,2516],["山东海事局",54,75,1953],["济南海关",13,14,1870],["水利部海河水利委员会",12,12,1422],["中国人民银行青岛市分行",7,14,811],["山东省邮政管理局",5,5,771],["国家自然资源督察济南局",1,1,646],["山东省气象局",19,19,518],["财政部山东监管局",1,2,430],["国家金融监督管理总局青岛监管局",10,10,403],["中国证券监督管理委员会山东监管局",3,8,373],["山东省地震局",1,1,311],["中国证券监督管理委员会青岛监管局",3,4,150],["国家矿山安全监察局山东局",5,5,142],["国家粮食和物资储备局山东局",1,1,109],["青岛海关缉私局",2,3,104],["审计署驻济南特派员办事处",2,3,103],["山东省公安厅特勤局",1,1,51],["水利部淮河水利委员会",2,2,49],["国家能源局山东监管办公室",1,1,21],["中国民用航空局华东地区管理局",4,4,15]]},"江西":{"code":4325000,"totals":{"pos":552,"recruits":1111,"applicants":85025,"approved":77704,"ratio":"809:1"},"orgs":[["国家税务总局江西省税务局",383,900,74893],["国家金融监督管理总局江西监管局",83,92,2921],["中国人民银行江西省分行",32,53,1700],["南昌海关",19,20,1492],["国家统计局江西调查总队",12,13,1376],["中国井冈山干部学院",2,3,827],["南昌铁路公安局",4,6,696],["江西省地震局",1,2,348],["中国证券监督管理委员会江西监管局",4,10,345],["长江航运公安局",4,4,258],["江西省气象局",2,2,108],["国家矿山安全监察局江西局",3,3,30],["长江海事局",2,2,28],["江西省公安厅特勤局",1,1,3]]},"湖南":{"code":4326000,"totals":{"pos":713,"recruits":1464,"applicants":113230,"approved":101390,"ratio":"1306:1"},"orgs":[["国家税务总局湖南省税务局",516,1200,88478],["广州铁路公安局",10,19,7522],["中国人民银行湖南省分行",65,86,4517],["国家统计局湖南调查总队",32,34,3316],["国家金融监督管理总局湖南监管局",47,58,3276],["长沙海关",23,25,1728],["湖南省气象局",2,2,788],["湖南省地震局",2,2,782],["财政部湖南监管局",1,2,742],["武汉铁路公安局",1,2,687],["国家粮食和物资储备局湖南局",1,1,611],["中国证券监督管理委员会湖南监管局",3,15,356],["审计署驻长沙特派员办事处",2,7,179],["长江海事局",4,4,110],["长江航运公安局",1,1,64],["国家矿山安全监察局湖南局",2,4,41],["国家能源局湖南监管办公室",1,2,33]]},"四川":{"code":4327000,"totals":{"pos":982,"recruits":1941,"applicants":149726,"approved":120204,"ratio":"1318:1"},"orgs":[["国家税务总局四川省税务局",658,1400,113085],["中国人民银行四川省分行",138,224,7457],["成都铁路公安局",36,120,7082],["国家统计局四川调查总队",37,37,4704],["国家金融监督管理总局四川监管局",35,59,4333],["国家自然资源督察成都局",1,2,2832],["成都海关",25,26,2643],["四川省地震局",2,2,1732],["财政部四川监管局",3,3,1222],["四川省气象局",17,17,948],["国家粮食和物资储备局四川局",1,1,946],["四川省通信管理局",1,1,550],["国家矿山安全监察局四川局",5,14,434],["中国证券监督管理委员会四川监管局",4,12,420],["四川出入境边防检查总站",3,3,384],["长江海事局",3,3,312],["四川省邮政管理局",6,6,284],["国家林业和草原局驻成都专员办",2,2,162],["国家国防科技工业局",2,5,99],["长江航运公安局",1,1,58],["国家能源局四川监管办公室",1,2,25],["中国民用航空飞行学院公安局",1,1,14]]},"贵州":{"code":4328000,"totals":{"pos":322,"recruits":662,"applicants":82465,"approved":72578,"ratio":"2157:1"},"orgs":[["国家税务总局贵州省税务局",197,450,63740],["国家金融监督管理总局贵州监管局",55,121,6793],["国家粮食和物资储备局贵州局",1,1,3064],["中国人民银行贵州省分行",21,32,2232],["成都铁路公安局",9,15,2147],["国家统计局贵州调查总队",14,15,1954],["中国证券监督管理委员会贵州监管局",3,4,1160],["财政部贵州监管局",1,1,543],["国家林业和草原局驻贵阳专员办",1,1,359],["贵州省气象局",12,12,182],["贵州省邮政管理局",2,2,172],["国家能源局贵州监管办公室",2,2,73],["国家矿山安全监察局贵州局",1,3,35],["中国民用航空局西南地区管理局",1,1,8],["贵阳海关",2,2,3]]},"陕西":{"code":4329000,"totals":{"pos":457,"recruits":962,"applicants":107943,"approved":102323,"ratio":"1123:1"},"orgs":[["国家税务总局陕西省税务局",237,700,84311],["中国人民银行陕西省分行",65,81,4532],["国家金融监督管理总局陕西监管局",64,73,4013],["西安海关",14,15,3796],["西安铁路公安局",6,10,2376],["水利部黄河水利委员会",4,4,1246],["国家自然资源督察西安局",3,3,1100],["陕西省气象局",24,25,1093],["陕西测绘地理信息局",2,2,1050],["陕西省地震局",2,2,1004],["中国延安干部学院",3,5,960],["陕西省邮政管理局",4,4,928],["国家统计局陕西调查总队",15,18,707],["国家能源局西北监管局",3,3,217],["财政部陕西监管局",1,2,196],["审计署驻西安特派员办事处",2,5,170],["中国证券监督管理委员会陕西监管局",2,3,134],["中国民用航空局西北地区管理局",5,5,60],["国家矿山安全监察局陕西局",1,2,50]]},"青海":{"code":4330000,"totals":{"pos":216,"recruits":294,"applicants":29398,"approved":21359,"ratio":"442:1"},"orgs":[["国家税务总局青海省税务局",151,200,23281],["中国人民银行青海省分行",25,43,2110],["国家金融监督管理总局青海监管局",16,25,1656],["青海省邮政管理局",4,4,776],["中国民用航空局西北地区管理局",2,2,515],["国家粮食和物资储备局青海局",1,1,361],["青藏铁路公安局",5,5,232],["财政部青海监管局",1,1,180],["青海出入境边防检查总站",5,5,147],["中国证券监督管理委员会青海监管局",3,5,76],["青海省地震局",1,1,49],["西宁海关",1,1,8],["青海省气象局",1,1,7]]},"宁夏":{"code":4331000,"totals":{"pos":133,"recruits":239,"applicants":30244,"approved":26884,"ratio":"968:1"},"orgs":[["国家税务总局宁夏回族自治区税务局",69,140,22250],["中国人民银行宁夏回族自治区分行",26,52,2572],["中国证券监督管理委员会宁夏监管局",4,7,1381],["国家林业和草原局三北局",3,3,1341],["国家统计局宁夏调查总队",5,5,1233],["国家粮食和物资储备局宁夏局",1,2,525],["国家金融监督管理总局宁夏监管局",14,18,485],["宁夏回族自治区邮政管理局",2,2,200],["银川海关",4,5,103],["宁夏回族自治区地震局",1,1,79],["宁夏回族自治区气象局",2,2,48],["财政部宁夏监管局",1,1,21],["宁夏出入境边防检查总站",1,1,6]]}};
+
+const GOV_PALETTE = ["#A23B3B","#1B2A4A","#B98F1F","#3E6B63","#6E7480","#7C2C2C","#8B8577"];
+
+// 各省学历要求 / 政治面貌要求下的招录人数总和（来源同 GOV_DATA：2026 国考职位表）
+const GOV_CENSUS = {"黑龙江":{"edu":[["仅限本科",290],["本科及以上",818],["本科或硕士研究生",12],["仅限硕士研究生",8],["硕士研究生及以上",59],["仅限博士研究生",0],["大专及以上",0]],"pol":[["不限",1132],["中共党员或共青团员",31],["中共党员",24]]},"青海":{"edu":[["仅限本科",0],["本科及以上",262],["本科或硕士研究生",1],["仅限硕士研究生",0],["硕士研究生及以上",31],["仅限博士研究生",0],["大专及以上",0]],"pol":[["不限",273],["中共党员或共青团员",10],["中共党员",11]]},"陕西":{"edu":[["仅限本科",73],["本科及以上",783],["本科或硕士研究生",12],["仅限硕士研究生",29],["硕士研究生及以上",65],["仅限博士研究生",0],["大专及以上",0]],"pol":[["不限",915],["中共党员或共青团员",10],["中共党员",37]]},"重庆":{"edu":[["仅限本科",41],["本科及以上",467],["本科或硕士研究生",4],["仅限硕士研究生",4],["硕士研究生及以上",54],["仅限博士研究生",0],["大专及以上",1]],"pol":[["不限",525],["中共党员或共青团员",26],["中共党员",20]]},"辽宁":{"edu":[["仅限本科",82],["本科及以上",1496],["本科或硕士研究生",1],["仅限硕士研究生",10],["硕士研究生及以上",90],["仅限博士研究生",0],["大专及以上",0]],"pol":[["不限",1573],["中共党员或共青团员",35],["中共党员",71]]},"贵州":{"edu":[["仅限本科",122],["本科及以上",498],["本科或硕士研究生",0],["仅限硕士研究生",6],["硕士研究生及以上",36],["仅限博士研究生",0],["大专及以上",0]],"pol":[["不限",632],["中共党员或共青团员",15],["中共党员",15]]},"西藏":{"edu":[["仅限本科",65],["本科及以上",191],["本科或硕士研究生",9],["仅限硕士研究生",0],["硕士研究生及以上",52],["仅限博士研究生",0],["大专及以上",0]],"pol":[["不限",132],["中共党员或共青团员",180],["中共党员",5]]},"福建":{"edu":[["仅限本科",375],["本科及以上",685],["本科或硕士研究生",91],["仅限硕士研究生",42],["硕士研究生及以上",134],["仅限博士研究生",0],["大专及以上",0]],"pol":[["不限",1232],["中共党员或共青团员",19],["中共党员",76]]},"甘肃":{"edu":[["仅限本科",83],["本科及以上",572],["本科或硕士研究生",8],["仅限硕士研究生",8],["硕士研究生及以上",47],["仅限博士研究生",0],["大专及以上",0]],"pol":[["不限",702],["中共党员或共青团员",10],["中共党员",6]]},"湖南":{"edu":[["仅限本科",90],["本科及以上",1282],["本科或硕士研究生",7],["仅限硕士研究生",17],["硕士研究生及以上",66],["仅限博士研究生",2],["大专及以上",0]],"pol":[["不限",1421],["中共党员或共青团员",22],["中共党员",21]]},"湖北":{"edu":[["仅限本科",51],["本科及以上",1307],["本科或硕士研究生",21],["仅限硕士研究生",8],["硕士研究生及以上",96],["仅限博士研究生",0],["大专及以上",0]],"pol":[["不限",1396],["中共党员或共青团员",32],["中共党员",55]]},"海南":{"edu":[["仅限本科",129],["本科及以上",119],["本科或硕士研究生",22],["仅限硕士研究生",14],["硕士研究生及以上",77],["仅限博士研究生",0],["大专及以上",0]],"pol":[["不限",311],["中共党员或共青团员",24],["中共党员",26]]},"浙江":{"edu":[["仅限本科",142],["本科及以上",917],["本科或硕士研究生",35],["仅限硕士研究生",60],["硕士研究生及以上",156],["仅限博士研究生",1],["大专及以上",0]],"pol":[["不限",1247],["中共党员或共青团员",14],["中共党员",50]]},"河南":{"edu":[["仅限本科",145],["本科及以上",1409],["本科或硕士研究生",19],["仅限硕士研究生",16],["硕士研究生及以上",102],["仅限博士研究生",0],["大专及以上",0]],"pol":[["不限",1625],["中共党员或共青团员",38],["中共党员",28]]},"河北":{"edu":[["仅限本科",127],["本科及以上",1537],["本科或硕士研究生",6],["仅限硕士研究生",17],["硕士研究生及以上",79],["仅限博士研究生",0],["大专及以上",0]],"pol":[["不限",1683],["中共党员或共青团员",36],["中共党员",47]]},"江西":{"edu":[["仅限本科",10],["本科及以上",1015],["本科或硕士研究生",17],["仅限硕士研究生",2],["硕士研究生及以上",67],["仅限博士研究生",0],["大专及以上",0]],"pol":[["不限",1079],["中共党员或共青团员",11],["中共党员",21]]},"新疆":{"edu":[["仅限本科",337],["本科及以上",1016],["本科或硕士研究生",0],["仅限硕士研究生",0],["硕士研究生及以上",150],["仅限博士研究生",0],["大专及以上",0]],"pol":[["不限",1175],["中共党员或共青团员",328],["中共党员",35]]},"江苏":{"edu":[["仅限本科",469],["本科及以上",947],["本科或硕士研究生",117],["仅限硕士研究生",18],["硕士研究生及以上",109],["仅限博士研究生",2],["大专及以上",0]],"pol":[["不限",1604],["中共党员或共青团员",10],["中共党员",48]]},"广西":{"edu":[["仅限本科",171],["本科及以上",994],["本科或硕士研究生",89],["仅限硕士研究生",19],["硕士研究生及以上",85],["仅限博士研究生",0],["大专及以上",0]],"pol":[["不限",1265],["中共党员或共青团员",73],["中共党员",20]]},"广东":{"edu":[["仅限本科",468],["本科及以上",1985],["本科或硕士研究生",557],["仅限硕士研究生",56],["硕士研究生及以上",241],["仅限博士研究生",3],["大专及以上",0]],"pol":[["不限",2987],["中共党员或共青团员",189],["中共党员",134]]},"山西":{"edu":[["仅限本科",120],["本科及以上",954],["本科或硕士研究生",5],["仅限硕士研究生",4],["硕士研究生及以上",67],["仅限博士研究生",0],["大专及以上",0]],"pol":[["不限",1128],["中共党员或共青团员",11],["中共党员",11]]},"山东":{"edu":[["仅限本科",45],["本科及以上",1806],["本科或硕士研究生",179],["仅限硕士研究生",36],["硕士研究生及以上",204],["仅限博士研究生",1],["大专及以上",0]],"pol":[["不限",2220],["中共党员或共青团员",20],["中共党员",31]]},"安徽":{"edu":[["仅限本科",68],["本科及以上",974],["本科或硕士研究生",4],["仅限硕士研究生",9],["硕士研究生及以上",95],["仅限博士研究生",0],["大专及以上",0]],"pol":[["不限",1110],["中共党员或共青团员",21],["中共党员",19]]},"宁夏":{"edu":[["仅限本科",9],["本科及以上",173],["本科或硕士研究生",0],["仅限硕士研究生",4],["硕士研究生及以上",53],["仅限博士研究生",0],["大专及以上",0]],"pol":[["不限",235],["中共党员或共青团员",1],["中共党员",3]]},"天津":{"edu":[["仅限本科",40],["本科及以上",299],["本科或硕士研究生",24],["仅限硕士研究生",14],["硕士研究生及以上",58],["仅限博士研究生",0],["大专及以上",0]],"pol":[["不限",347],["中共党员或共青团员",51],["中共党员",37]]},"四川":{"edu":[["仅限本科",183],["本科及以上",1455],["本科或硕士研究生",4],["仅限硕士研究生",26],["硕士研究生及以上",273],["仅限博士研究生",0],["大专及以上",0]],"pol":[["不限",1782],["中共党员或共青团员",125],["中共党员",34]]},"吉林":{"edu":[["仅限本科",106],["本科及以上",1042],["本科或硕士研究生",19],["仅限硕士研究生",34],["硕士研究生及以上",44],["仅限博士研究生",0],["大专及以上",0]],"pol":[["不限",1039],["中共党员或共青团员",164],["中共党员",50]]},"北京":{"edu":[["仅限本科",21],["本科及以上",469],["本科或硕士研究生",125],["仅限硕士研究生",181],["硕士研究生及以上",639],["仅限博士研究生",26],["大专及以上",0]],"pol":[["不限",553],["中共党员或共青团员",417],["中共党员",491]]},"内蒙古":{"edu":[["仅限本科",193],["本科及以上",964],["本科或硕士研究生",8],["仅限硕士研究生",6],["硕士研究生及以上",60],["仅限博士研究生",0],["大专及以上",6]],"pol":[["不限",1067],["中共党员或共青团员",105],["中共党员",73]]},"上海":{"edu":[["仅限本科",237],["本科及以上",314],["本科或硕士研究生",92],["仅限硕士研究生",13],["硕士研究生及以上",87],["仅限博士研究生",0],["大专及以上",0]],"pol":[["不限",664],["中共党员或共青团员",21],["中共党员",58]]},"云南":{"edu":[["仅限本科",129],["本科及以上",1193],["本科或硕士研究生",15],["仅限硕士研究生",2],["硕士研究生及以上",120],["仅限博士研究生",0],["大专及以上",0]],"pol":[["不限",1283],["中共党员或共青团员",149],["中共党员",27]]}};
+const POL_COLOR_GOV = {"不限":"#3E6B63","中共党员或共青团员":"#B98F1F","中共党员":"#A23B3B"};
+const provincesGov = Object.keys(GOV_DATA);
+const indexListGov = document.getElementById('indexListGov');
+
+provincesGov.forEach((name, i) => {
+  const li = document.createElement('li');
+  const btn = document.createElement('button');
+  btn.className = 'index-item';
+  btn.dataset.name = name;
+  btn.innerHTML = `<span class="idx-code">${String(i+1).padStart(2,'0')}</span><span>${name}</span>`;
+  btn.addEventListener('click', () => renderGov(name));
+  li.appendChild(btn);
+  indexListGov.appendChild(li);
+});
+
+function setActiveGov(name){
+  indexListGov.querySelectorAll('.index-item').forEach(el=>{
+    el.classList.toggle('active', el.dataset.name === name);
+  });
+}
+
+// build the recruit-share composition: top 6 recruiting agencies + 其他
+function govComposition(orgs, totalRecruits){
+  const sorted = orgs.slice().sort((a,b)=>b[2]-a[2]);
+  const top = sorted.slice(0,6);
+  const restRec = sorted.slice(6).reduce((s,o)=>s+o[2],0);
+  const comp = top.map((o,i)=>({name:o[0], pct:o[2]/totalRecruits*100, color:GOV_PALETTE[i]}));
+  if(restRec > 0) comp.push({name:'其他', pct:restRec/totalRecruits*100, color:GOV_PALETTE[6]});
+  return comp;
+}
+
+const GDONUT_R = 90;
+const GDONUT_C = 2 * Math.PI * GDONUT_R;
+let govCurrentTop = null;
+
+function buildGovDonut(comp){
+  const svg = document.getElementById('govDonutSvg');
+  let html = `<circle cx="105" cy="105" r="${GDONUT_R}" fill="none" stroke="rgba(27,42,74,0.06)" stroke-width="30"/>`;
+  html += `<g transform="rotate(-90 105 105)">`;
+  let acc = 0;
+  comp.forEach((c,i)=>{
+    const offset = -(acc/100 * GDONUT_C);
+    // start collapsed at 0 length so the CSS dasharray transition animates the arc in
+    html += `<circle class="donut-arc" data-i="${i}" data-name="${c.name}" data-value="${c.pct.toFixed(1)}" cx="105" cy="105" r="${GDONUT_R}" fill="none" stroke="${c.color}" stroke-width="30" stroke-dasharray="0 ${GDONUT_C.toFixed(2)}" stroke-dashoffset="${offset.toFixed(2)}" stroke-linecap="butt"/>`;
+    acc += c.pct;
+  });
+  html += `</g>`;
+  svg.innerHTML = html;
+
+  const arcs = svg.querySelectorAll('.donut-arc');
+  requestAnimationFrame(()=>{
+    comp.forEach((c,i)=>{
+      const len = GDONUT_C * c.pct / 100;
+      arcs[i].setAttribute('stroke-dasharray', `${len.toFixed(2)} ${(GDONUT_C-len).toFixed(2)}`);
+    });
+  });
+  arcs.forEach(arc=>{
+    arc.addEventListener('mouseenter', ()=>govHighlight(+arc.dataset.i, arc));
+    arc.addEventListener('mouseleave', govUnhighlight);
+  });
+}
+
+function govHighlight(i, arcEl){
+  const arc = arcEl || document.querySelector(`#govDonutSvg .donut-arc[data-i="${i}"]`);
+  document.querySelectorAll('#govDonutSvg .donut-arc').forEach(el => el.classList.toggle('hover', +el.dataset.i === i));
+  document.querySelectorAll('#govLegend tr').forEach(tr => tr.classList.toggle('hover', +tr.dataset.i === i));
+  if(arc){
+    const name = arc.dataset.name, v = arc.dataset.value;
+    document.getElementById('govDonutCenter').classList.add('pulse');
+    document.getElementById('govDonutPct').textContent = Number(v).toFixed(1) + '%';
+    const tip = document.getElementById('govDonutTooltip');
+    tip.innerHTML = `${name} · <b>${Number(v).toFixed(1)}%</b>`;
+    tip.style.left = '105px';
+    tip.style.top = '30px';
+    tip.classList.add('show');
+  }
+}
+
+function govUnhighlight(){
+  document.querySelectorAll('#govDonutSvg .donut-arc').forEach(el => el.classList.remove('hover'));
+  document.querySelectorAll('#govLegend tr').forEach(tr => tr.classList.remove('hover'));
+  document.getElementById('govDonutCenter').classList.remove('pulse');
+  document.getElementById('govDonutTooltip').classList.remove('show');
+  if(govCurrentTop){
+    document.getElementById('govDonutPct').textContent = govCurrentTop.pct.toFixed(1) + '%';
+    document.getElementById('govDonutLbl').textContent = '招录占比';
+  }
+}
+
+function playGovRecordEnter(){
+  const record = document.querySelector('#page-gov .record');
+  record.classList.remove('anim-in');
+  void record.offsetWidth;
+  record.classList.add('anim-in');
+}
+
+function renderGov(name){
+  const rec = GOV_DATA[name];
+  setActiveGov(name);
+  playGovRecordEnter();
+
+  document.getElementById('govTitle').textContent = name;
+  document.getElementById('govTag').textContent = '国考招录档案 · 2026';
+  const sealEl = document.getElementById('govSeal');
+  sealEl.textContent = name;
+  sealEl.style.fontSize = (name.length <= 2 ? 19 : name.length === 3 ? 15 : 13) + 'px';
+
+  // province totals strip
+  const t = rec.totals;
+  const stats = [
+    ['招录职位', String(t.pos)],
+    ['招录人数', String(t.recruits)],
+    ['报名人数', String(t.applicants)],
+    ['过审人数', String(t.approved)]
+  ];
+  const statsEl = document.getElementById('govStats');
+  statsEl.innerHTML =
+    stats.map(([k,v]) => `<div class="gov-stat"><div class="k">${k}</div><div class="v" data-target="${v}">0</div></div>`).join('') +
+    `<div class="gov-stat ratio"><div class="k">最高竞争比</div><div class="v">${t.ratio}</div></div>`;
+  requestAnimationFrame(()=>{
+    statsEl.querySelectorAll('.v[data-target]').forEach((el,i)=>{
+      const target = Number(el.dataset.target);
+      setTimeout(()=>animateNumber(el, 0, target, 700), i*60);
+    });
+  });
+
+  // donut composition (recruit share)
+  const comp = govComposition(rec.orgs, t.recruits);
+  govCurrentTop = comp[0];
+  buildGovDonut(comp);
+  document.getElementById('govDonutPct').textContent = comp[0].pct.toFixed(1) + '%';
+  document.getElementById('govDonutLbl').textContent = '招录占比';
+
+  const legend = document.getElementById('govLegend');
+  legend.innerHTML = '';
+  comp.forEach((c,i)=>{
+    const tr = document.createElement('tr');
+    tr.dataset.i = i;
+    const short = c.name.length > 9 ? c.name.slice(0,9) + '…' : c.name;
+    tr.innerHTML = `<td><span class="sw" style="background:${c.color}"></span><span class="nm" title="${c.name}">${short}</span></td><td class="val">${c.pct.toFixed(1)}%</td>`;
+    tr.addEventListener('mouseenter', ()=>govHighlight(i));
+    tr.addEventListener('mouseleave', govUnhighlight);
+    legend.appendChild(tr);
+  });
+
+  // agency ranking by applicants
+  const ranked = rec.orgs.slice().sort((a,b)=>b[3]-a[3]);
+  const topN = Math.min(ranked.length, 25);
+  const shown = ranked.slice(0, topN);
+  const max = shown[0][3];
+  document.getElementById('govOrgCount').textContent = `共 ${rec.orgs.length} 家 · 报名前 ${topN}`;
+  const list = document.getElementById('govList');
+  list.innerHTML = '';
+  shown.forEach((o,i)=>{
+    const row = document.createElement('li');
+    row.className = 'gov-row';
+    const pct = (o[3]/max*100).toFixed(1);
+    row.innerHTML = `
+      <span class="rank ${i<3?'top':''}">${String(i+1).padStart(2,'0')}</span>
+      <span class="name" title="${o[0]}">${o[0]}</span>
+      <span class="bartrack"><span class="barfill" data-pct="${pct}" style="width:0%"></span></span>
+      <span class="count" data-target="${o[3]}">0</span>
+    `;
+    list.appendChild(row);
+  });
+  requestAnimationFrame(()=>{
+    list.querySelectorAll('.barfill').forEach((el,i)=>{
+      setTimeout(()=>{ el.style.width = el.dataset.pct + '%'; }, i*20);
+    });
+    list.querySelectorAll('.count').forEach((el,i)=>{
+      const target = Number(el.dataset.target);
+      setTimeout(()=>animateNumber(el, 0, target, 650), i*20);
+    });
+  });
+
+  renderGovCensus(name);
+}
+
+/* 目录三新增：各学历招录数量 + 政治面貌构成（数据源同 GOV_DATA） */
+function govCensusRow(rank, label, cnt, pct, extra, color){
+  const style = `width:0%;` + (color ? `background:${color};` : '');
+  return `
+    <li class="gov-row">
+      <span class="rank ${rank<3?'top':''}">${String(rank+1).padStart(2,'0')}</span>
+      <span class="name" title="${label}">${label}</span>
+      <span class="bartrack"><span class="barfill" data-pct="${pct}" style="${style}"></span></span>
+      <span class="count" data-target="${cnt}">0${extra||''}</span>
+    </li>`;
+}
+
+function animateGovCensusList(list){
+  requestAnimationFrame(()=>{
+    list.querySelectorAll('.barfill').forEach((el,i)=>{
+      setTimeout(()=>{ el.style.width = el.dataset.pct + '%'; }, i*30);
+    });
+    list.querySelectorAll('.count').forEach((el,i)=>{
+      const target = Number(el.dataset.target);
+      const sub = el.querySelector('.sub');
+      const suffix = sub ? sub.outerHTML : '';
+      setTimeout(()=>{
+        const start = performance.now();
+        (function step(now){
+          const t = Math.min((now-start)/650,1);
+          const eased = 1 - Math.pow(1-t,3);
+          el.innerHTML = Math.round(target*eased).toLocaleString() + suffix;
+          if(t<1) requestAnimationFrame(step);
+        })(performance.now());
+      }, i*30);
+    });
+  });
+}
+
+function renderGovCensus(name){
+  const c = GOV_CENSUS[name];
+  if(!c) return;
+
+  // 各学历招录数量（按人数降序，展示全部学历项）
+  const edu = c.edu.slice().sort((a,b)=>b[1]-a[1]);
+  const eduTotal = edu.reduce((s,[,n])=>s+n,0);
+  const eduMax = edu.length ? (edu[0][1] || 1) : 1;
+  document.getElementById('govEduNote').textContent = `共 ${eduTotal.toLocaleString()} 人`;
+  const eduList = document.getElementById('govEduList');
+  eduList.innerHTML = edu.map(([n,v],i)=> govCensusRow(i, n, v, (v/eduMax*100).toFixed(1))).join('');
+  animateGovCensusList(eduList);
+
+  // 政治面貌构成（按人数降序，含占比，按面貌配色）
+  const pol = c.pol.slice().sort((a,b)=>b[1]-a[1]);
+  const polTotal = pol.reduce((s,[,n])=>s+n,0);
+  const polMax = pol.length ? (pol[0][1] || 1) : 1;
+  document.getElementById('govPolNote').textContent = `共 ${polTotal.toLocaleString()} 人`;
+  const polList = document.getElementById('govPolList');
+  polList.innerHTML = pol.map(([n,v],i)=>{
+    const share = polTotal ? (v/polTotal*100).toFixed(1) : '0.0';
+    return govCensusRow(i, n, v, (v/polMax*100).toFixed(1), `<span class="sub">${share}%</span>`, POL_COLOR_GOV[n]);
+  }).join('');
+  animateGovCensusList(polList);
+}
+
+renderGov(provincesGov[0]);
+
+/* ================= Hot-position salary page ================= */
+/* 数据摘自《RGF 薪酬观察 2026 · 中国大陆篇》。年薪单位：万元/年（原始报告以千元计，此处已折算）。
+   hot: [职位, 技能需求, 预计2026跳槽薪资涨幅%]；roles: [层级, 年薪最小值, 年薪最大值]。 */
+const POS_DATA = {
+  "人工智能与数据科学":{
+    sector:"高科技、互联网与新媒体",
+    hot:[
+      ["人工智能（大语言模型方向）","AIGC · 大规模算法 · 数据科学",28],
+      ["人工智能（机器人 / 自动驾驶方向）","预测 · 感知 · 决策",30],
+      ["数据产品专家","数据分析 · 产品设计",25],
+      ["隐私计算专家","密码学 · 数据安全合规 · 风险控制",22]
+    ],
+    roles:[["总监",120,250],["经理 / 架构师",60,120],["工程师",45,100]]
+  },
+  "自动驾驶与具身智能":{
+    sector:"高科技、互联网与新媒体",
+    hot:[
+      ["人工智能（机器人或自动驾驶方向）","预测 · 感知 · 决策",30]
+    ],
+    roles:[["总监",150,400],["经理",80,150],["专家",80,150]]
+  },
+  "大数据与商务智能":{
+    sector:"高科技、互联网与新媒体",
+    hot:[
+      ["数据产品专家","数据分析 · 产品设计",25]
+    ],
+    roles:[["总监",80,150],["经理 / 架构师",55,100],["工程师",30,65]]
+  },
+  "云与基础架构（存储）":{
+    sector:"高科技、互联网与新媒体",
+    hot:[],
+    roles:[["总监",80,140],["经理",50,80],["主管",30,50]]
+  },
+  "网络安全与隐私计算":{
+    sector:"高科技、互联网与新媒体",
+    hot:[
+      ["隐私计算专家","密码学 · 数据安全合规 · 风险控制",22]
+    ],
+    roles:[["总监",80,150],["架构师",60,80],["经理",50,70],["工程师",35,60]]
+  },
+  "新能源汽车 · 人工智能研发":{
+    sector:"工业 · 交通运输（汽车、航空）与供应链",
+    hot:[
+      ["人工智能研发工程师","设计验证 · 开发测试",30]
+    ],
+    roles:[["总监",120,250],["经理",60,120],["主管",50,80],["工程师",40,60]]
+  },
+  "新能源汽车 · 电池管理系统":{
+    sector:"工业 · 交通运输（汽车、航空）与供应链",
+    hot:[],
+    roles:[["总监",80,250],["经理",50,120],["主管",40,60],["工程师",30,60]]
+  },
+  "半导体 · 先进制造研发":{
+    sector:"工业 · 先进制造业",
+    hot:[
+      ["人工智能研发工程师","设计验证 · 开发测试",30],
+      ["研发负责人","产品本地化生产 · 降本",25]
+    ],
+    roles:[["总监",55,240],["经理",40,140],["主管",32,70],["工程师",25,80]]
+  },
+  "消费品 · 数字化与新零售":{
+    sector:"消费品与零售",
+    hot:[
+      ["O2O / 新零售负责人","全渠道知识 · 库存预测",25],
+      ["产品运营 / GTM","供应链知识 · 产品规划 · 市场洞察",23]
+    ],
+    roles:[["总监",80,180],["经理",40,80],["主管",25,35]]
+  }
+};
+
+const posDirs = Object.keys(POS_DATA);
+const indexListPos = document.getElementById('indexListPos');
+
+posDirs.forEach((name, i) => {
+  const li = document.createElement('li');
+  const btn = document.createElement('button');
+  btn.className = 'index-item';
+  btn.dataset.name = name;
+  btn.innerHTML = `<span class="idx-code">${String(i+1).padStart(2,'0')}</span><span>${name}</span>`;
+  btn.addEventListener('click', () => renderPos(name));
+  li.appendChild(btn);
+  indexListPos.appendChild(li);
+});
+
+function setActivePos(name){
+  indexListPos.querySelectorAll('.index-item').forEach(el=>{
+    el.classList.toggle('active', el.dataset.name === name);
+  });
+}
+
+function playPosRecordEnter(){
+  const record = document.querySelector('#page-pos .record');
+  record.classList.remove('anim-in');
+  void record.offsetWidth;
+  record.classList.add('anim-in');
+}
+
+function renderPos(name){
+  const rec = POS_DATA[name];
+  setActivePos(name);
+  playPosRecordEnter();
+
+  document.getElementById('posTitle').textContent = name;
+  document.getElementById('posTag').textContent = '热门职位薪酬档案 · 2026';
+  const sealEl = document.getElementById('posSeal');
+  sealEl.textContent = '热门';
+  sealEl.style.fontSize = '18px';
+
+  document.getElementById('posSector').innerHTML = `所属行业指南：<b>${rec.sector}</b>`;
+
+  // hot positions (expected 2026 job-hop salary increase)
+  const hotList = document.getElementById('hotList');
+  const hotEmpty = document.getElementById('hotEmpty');
+  hotList.innerHTML = '';
+  if(rec.hot.length){
+    hotEmpty.style.display = 'none';
+    const maxJump = Math.max(...rec.hot.map(h => h[2]), 30);
+    rec.hot.forEach(([role, skill, jump]) => {
+      const pct = (jump / maxJump * 100).toFixed(1);
+      const li = document.createElement('li');
+      li.className = 'hot-row';
+      li.innerHTML = `
+        <div class="hot-top">
+          <span class="hot-name">${role}</span>
+          <span class="hot-jump"><span class="up">▲</span>${jump}%</span>
+        </div>
+        <div class="hot-skill">技能需求：${skill}</div>
+        <div class="hot-track"><span class="hot-fill" data-pct="${pct}" style="width:0%"></span></div>
+      `;
+      hotList.appendChild(li);
+    });
+  } else {
+    hotEmpty.style.display = 'block';
+  }
+
+  // annual base salary ranges (floating min–max bars), sorted by upper bound desc
+  const roles = rec.roles.slice().sort((a,b)=>b[2]-a[2]);
+  const globalMax = Math.max(...roles.map(r => r[2]));
+  const posList = document.getElementById('posList');
+  posList.innerHTML = '';
+  roles.forEach(([lvl, mn, mx]) => {
+    const left = (mn / globalMax * 100).toFixed(1);
+    const width = ((mx - mn) / globalMax * 100).toFixed(1);
+    const row = document.createElement('li');
+    row.className = 'pos-row';
+    row.innerHTML = `
+      <span class="plvl">${lvl}</span>
+      <span class="pos-track"><span class="pos-range" data-left="${left}" data-width="${width}" style="left:0%;width:0%"></span></span>
+      <span class="pos-val">${mn}–${mx} 万</span>
+    `;
+    posList.appendChild(row);
+  });
+  document.getElementById('posAxis').innerHTML = `<span>0</span><span>${Math.round(globalMax/2)}</span><span>${globalMax} 万</span>`;
+
+  // animate bars in
+  requestAnimationFrame(() => {
+    document.querySelectorAll('#hotList .hot-fill').forEach((el, i) => {
+      setTimeout(() => { el.style.width = el.dataset.pct + '%'; }, i * 70);
+    });
+    document.querySelectorAll('#posList .pos-range').forEach((el, i) => {
+      setTimeout(() => {
+        el.style.left = el.dataset.left + '%';
+        el.style.width = el.dataset.width + '%';
+      }, i * 60);
+    });
+  });
+}
+
+renderPos(posDirs[0]);
+
+/* ================= 省域职业薪酬分布 page (目录五) ================= */
+/* 数据依据智联招聘在招岗位统计，按工作城市归入所属省份。
+   province -> { demand:招聘人数之和, salary:按招聘人数加权的月薪均值(元),
+   cityCount:覆盖城市数, cities:[ { name, demand, salary, jobCount, jobs:[[岗位,平均月薪,学历要求,招聘人数], ... 取需求前12] } ] } */
+const REGION_DATA = {"北京":{"demand":51057,"salary":16739,"cityCount":1,"cities":[{"name":"北京","demand":51057,"salary":16739,"jobCount":2700,"jobs":[["提成律师",28311,"本科",6409],["标书专员",6040,"本科",5171],["法务经理",22697,"本科",2403],["法务专员",10784,"硕士",1895],["专职律师",16350,"本科",1658],["律师助理",5827,"本科",1465],["风控合规（法律方向）",20000,"硕士",999],["专利运营经理（技术方向）",25000,"硕士",999],["实习律师",4688,"本科",972],["分成律师",15000,"本科",900],["投标专员",8199,"大专",848],["招投标专员",4978,"本科",796]]}]},"广东":{"demand":42135,"salary":11195,"cityCount":20,"cities":[{"name":"广州","demand":29846,"salary":11892,"jobCount":817,"jobs":[["投标造价工程师",12500,"本科",19980],["执业律师、授薪律师、实习人员",18000,"本科",1360],["律师助理/实习律师",4999,"本科",1304],["授薪律师/诉讼律师",8000,"本科",500],["授薪律师",10556,"本科",330],["客户实习律师",5482,"本科",308],["执业律师",12936,"学历不限",251],["律师助理",6281,"学历不限",235],["破产清算和重整律师",30000,"本科",224],["律所上班+接受无经验+月入1w",12000,"学历不限",198],["投标专员",6688,"大专",149],["8000+调解员/带薪培训/五险一金",9000,"大专",125]]},{"name":"深圳","demand":7216,"salary":10084,"jobCount":988,"jobs":[["投标专员",6410,"本科",1185],["独立提成律师",14324,"本科",370],["授薪律师",10672,"本科",218],["实习律师",6069,"本科",204],["律师助理",6324,"本科",195],["法务专员",9506,"本科",157],["独立律师",7446,"本科",148],["律师",7332,"本科",137],["招投标专员",8279,"本科",102],["执业律师",15640,"本科",100],["法律质检（五险一金+双休）",175,"本科",100],["法律研究生福利岗~【优先国际法】可线上工作",8500,"硕士",100]]},{"name":"佛山","demand":1472,"salary":10694,"jobCount":157,"jobs":[["合作律师",15430,"本科",142],["法律销售顾问+双休+五险一金",10500,"高中",135],["CDD Executive (MJ001716)",6000,"大专",91],["执业律师（多名）",15000,"本科",80],["高级法务专员",13902,"本科",51],["独立律师/提成律师",15000,"本科",50],["法务风控岗 (MJ001287)",12500,"本科",49],["标书文案岗",6707,"本科",46],["商务投标专员",6636,"大专",44],["实习律师/律师助理",3900,"本科",40],["实习律师",4565,"本科",31],["法务销售顾问，不加班，大小周",6000,"高中",30]]},{"name":"东莞","demand":996,"salary":11250,"jobCount":41,"jobs":[["工伤事故办案律师（合作）",12500,"本科",336],["工伤事故办案律师",12500,"本科",206],["实习律师",5679,"本科",126],["法律咨询顾问",11500,"大专",100],["专职律师",15000,"本科",60],["法律咨询顾问（可居家办公）",7833,"大专",21],["律师助理（五险一金+出差补贴）",6000,"学历不限",15],["授薪律师",11917,"学历不限",12],["律师助理",7000,"大专",11],["合作办案律师",12500,"本科",11],["律所专职律师",13500,"学历不限",10],["建筑招标资料员/双休",10000,"本科",10]]},{"name":"珠海","demand":947,"salary":7823,"jobCount":91,"jobs":[["内审专员",6000,"本科",102],["督查专员",6265,"大专",98],["市场督查专员",5000,"大专",90],["律师助理",5462,"本科",53],["法务监察专员/主管",5000,"大专",46],["资源督查专员",5500,"大专",46],["市场稽核",5000,"大专",45],["资源监督专员",6500,"大专",44],["独立律师",16500,"本科",35],["督察专员（六险一金/双休）",6000,"本科",33],["投标管理专员",8000,"本科",26],["财务合规BP",8500,"本科",25]]},{"name":"惠州","demand":858,"salary":3473,"jobCount":46,"jobs":[["法务助理/法务专员（代开庭）",180,"大专",475],["法律销售专员",6000,"大专",70],["实习律师、律师助理",4000,"本科",60],["法务专员",7798,"本科",42],["合规管理人员",15000,"本科",17],["风险管理工程师",12125,"本科",16],["法务主管/风控主管",10000,"本科",16],["法务助理",5000,"大专",14],["法学实习生",55,"本科",12],["招投标专员",4800,"大专",10],["律师助理（大亚湾分所）",4000,"本科",10],["工程招投标专员",12100,"本科",10]]},{"name":"中山","demand":223,"salary":5072,"jobCount":25,"jobs":[["法院送达文员（惠东双休）",3500,"大专",120],["客户实习律师",4500,"本科",15],["办案实习律师",5000,"本科",15],["法院文职(平阳双休)",3500,"大专",14],["法院调解员(江海双休)",5500,"大专",12],["急招专职律师",9500,"本科",9],["专职律师",9500,"本科",7],["法务专员",11200,"本科",5],["投标项目助理",11000,"本科",4],["法院调解文员(佛山顺德)",5167,"大专",3],["报批报建专员",11000,"本科",2],["法官助理/AI辅助办案改革助理",9000,"硕士",2]]},{"name":"湛江","demand":206,"salary":10427,"jobCount":8,"jobs":[["二级市政公用建造师",11464,"大专",140],["法务专员",8000,"本科",23],["一级市政公用建造师",12000,"初中及以下",20],["品质监察专员",4500,"本科",12],["规则运营专员",4500,"大专",6],["法律顾问主管（高薪+配四个电销）",7500,"大专",2],["普法专员（高薪+配四个电销）",7500,"大专",2],["招标项目经理",8000,"本科",1]]},{"name":"江门","demand":81,"salary":8154,"jobCount":15,"jobs":[["法务专员",6156,"本科",16],["高级法务专员9765（急招 诉讼方向）",12300,"本科",15],["商务招投标专员",6000,"大专",13],["法务专员9777",8000,"本科",7],["法务文员",4500,"大专",7],["法律事务中心经理",16500,"本科",4],["法律销售顾问",6000,"大专",3],["实习律师/律师助理",9000,"本科",3],["商务投标专员",5500,"大专",3],["法务主管",10333,"本科",3],["律师助理",7500,"大专",2],["投标专员",5000,"大专",2]]},{"name":"清远","demand":65,"salary":8785,"jobCount":12,"jobs":[["授薪律师",12500,"本科",14],["实习律师",5000,"本科",12],["律师助理",4500,"本科",10],["法务专员",6000,"本科",8],["法律实习生",1500,"本科",6],["化妆品法规专员",15000,"本科",3],["法规经理/总监",22500,"本科",3],["招标合约经理",12500,"本科",2],["审计风控部负责人",14500,"本科",2],["法务主管",12500,"本科",2],["国际法规专员",15000,"本科",2],["法务主任",12500,"本科",1]]},{"name":"肇庆","demand":53,"salary":9585,"jobCount":7,"jobs":[["法务经理",12500,"本科",26],["稽核文员",6500,"本科",11],["标书专员",6500,"大专",8],["招投标管理岗",7500,"本科",4],["法务人员",7500,"大专",2],["审计监督部副部长",12000,"本科",1],["律师助理",2500,"本科",1]]},{"name":"汕尾","demand":47,"salary":13468,"jobCount":9,"jobs":[["市场拓展部副部长（区属国企子公司）",25000,"本科",13],["招投标管理岗（区属国企子公司）",11000,"本科",12],["法审文员",5000,"大专",6],["招投标管理岗（区属国企子公司））",11000,"本科",5],["法律与风险管理岗（25社招国企编制）",5000,"本科",3],["法律与风险管理岗（25校招国企编制）",5000,"本科",2],["风控管理岗（合规/审计/运营）",11000,"本科",2],["风控管理岗（合规/审计/法务）",11000,"本科",2],["招投标管理岗",11000,"本科",2]]},{"name":"云浮","demand":26,"salary":8250,"jobCount":2,"jobs":[["法务专员",8480,"本科",25],["实习律师",2500,"本科",1]]},{"name":"汕头","demand":22,"salary":10841,"jobCount":7,"jobs":[["法务",14188,"本科",8],["商务专员",5500,"大专",5],["招标代理项目负责人",14000,"本科",4],["招投标专员",5500,"大专",2],["商务主管",6000,"大专",1],["医药招标经理",11500,"大专",1],["法务经理/主管",13000,"本科",1]]},{"name":"潮州","demand":22,"salary":11886,"jobCount":2,"jobs":[["法务专员",12000,"本科",21],["法规研究员",9500,"本科",1]]},{"name":"韶关","demand":20,"salary":5875,"jobCount":4,"jobs":[["商务标书专员",6000,"大专",16],["法务专员",5500,"大专",2],["投标文员（双休）",4500,"大专",1],["经营招投标专员",6000,"学历不限",1]]},{"name":"阳江","demand":13,"salary":6000,"jobCount":2,"jobs":[["律师助理",6000,"大专",12],["投标资料员",6000,"大专",1]]},{"name":"梅州","demand":10,"salary":4293,"jobCount":3,"jobs":[["法务专员",5000,"大专",4],["法务",7500,"大专",3],["企业法务实习生",145,"本科",3]]},{"name":"茂名","demand":10,"salary":6750,"jobCount":3,"jobs":[["法务人员",6900,"本科",5],["公司法务（建筑工程）",7000,"本科",3],["投标员",6000,"本科",2]]},{"name":"河源","demand":2,"salary":10250,"jobCount":2,"jobs":[["法务经理/主管",15000,"本科",1],["法务专员",5500,"本科",1]]}]},"山东":{"demand":19081,"salary":10879,"cityCount":16,"cities":[{"name":"济南","demand":7622,"salary":13938,"jobCount":476,"jobs":[["债权管理专家",44980,"本科",1000],["实习律师",3390,"本科",813],["专职律师",14369,"本科",393],["提成律师",13006,"本科",313],["授薪律师",8864,"本科",257],["执业律师",10407,"本科",241],["风险防控专员 高薪六险",6000,"学历不限",200],["律师助理",4821,"本科",168],["法务专员",7912,"大专",131],["招标项目经理",9684,"大专",128],["投标专员",5388,"大专",120],["专职执业律师及独立执业律师",10460,"本科",112]]},{"name":"青岛","demand":6214,"salary":9550,"jobCount":381,"jobs":[["投标管理专员",8000,"本科",1998],["执业律师",14394,"本科",412],["实习律师",5009,"本科",264],["独立提成律师",29898,"本科",201],["贷后风控专员",7500,"大专",195],["法务专员",7257,"本科",136],["授薪律师",8114,"本科",132],["咨询师（工程咨询、招标采购代理、造价咨询）",9000,"本科",130],["执业律师（崂山总部）",12500,"本科",90],["专职律师",5917,"本科",84],["征信管理员",8500,"大专",80],["招投标书专员",5500,"本科",80]]},{"name":"烟台","demand":1320,"salary":9760,"jobCount":113,"jobs":[["🔥（国企）合规筛查员🔥",15000,"学历不限",300],["招标专员",6500,"本科",100],["（国企）合规筛查员",15000,"学历不限",100],["提成律师",9500,"本科",70],["执业律师",8802,"本科",48],["法务专员",6324,"本科",37],["标书专员",5500,"本科",36],["投标专员",5516,"本科",32],["律师助理（非法学）",4790,"大专",31],["招标代理从业人员",6500,"大专",30],["招投标专员",5259,"大专",29],["商务投标专员",5000,"本科",25]]},{"name":"泰安","demand":651,"salary":5550,"jobCount":52,"jobs":[["标书制作员/标书专员",4000,"大专",96],["大学生招聘（定向标书制作）",3500,"大专",60],["投标专员兼办公文员",4000,"本科",55],["标书制作专员",5075,"本科",53],["法务专员",6000,"本科",51],["投标方案工程师",7500,"本科",48],["标书专员",5186,"大专",35],["综合内勤（投标、采购、招聘、行政）",5000,"大专",29],["工程标书制作专员（应往届毕业生）",3452,"本科",21],["营销标书工程师",7000,"本科",16],["标书经理",8000,"本科",14],["公司法务",6500,"本科",14]]},{"name":"潍坊","demand":559,"salary":8144,"jobCount":105,"jobs":[["执业律师",9398,"本科",49],["实习律师",2421,"本科",43],["专职律师",10824,"本科",37],["法务专员",5600,"本科",35],["律师助理（招应届，底薪+晋升空间---非传统模式）",4500,"大专",25],["合规内审专员",5208,"本科",24],["风控经理",6000,"大专",20],["质量稽查工程师",5500,"大专",18],["高级内控专家",17500,"本科",15],["环境损害司法鉴定",8500,"本科",15],["投标专员",5733,"大专",15],["风控审核专员（不直签）",8000,"本科",12]]},{"name":"聊城","demand":481,"salary":5345,"jobCount":17,"jobs":[["执业律师",7302,"本科",106],["实习律师 A证",4500,"本科",90],["实习律师",3316,"硕士",76],["律师助理",3000,"本科",50],["法律援助员",3500,"大专",42],["商务投标专员",6500,"本科",34],["法务专员",8429,"本科",14],["法律事务专员",4500,"本科",12],["稽核专员(A08465)",6000,"大专",11],["招标代理专员",5500,"本科",10],["投标总监（通信标书制作）",15000,"本科",8],["招标文员",7500,"学历不限",6]]},{"name":"济宁","demand":416,"salary":8446,"jobCount":47,"jobs":[["法律销售顾问4000+高提成",12000,"大专",72],["招采成本",7922,"中专/中技",32],["标书制作专员",4966,"本科",29],["工程招投标专员",4552,"大专",29],["商务投标专员",4105,"大专",19],["法务总监",21500,"本科",15],["招标代理专员",6000,"本科",15],["法务经理",18900,"本科",15],["法律顾问",7346,"大专",13],["企业法务专员",9292,"大专",12],["招投标专员",5208,"大专",12],["全职律师",6500,"本科",12]]},{"name":"临沂","demand":357,"salary":9429,"jobCount":56,"jobs":[["投标技术专员",9046,"学历不限",65],["招标代理专员",5324,"大专",34],["法务顾问",6241,"学历不限",27],["电力投标文员",6000,"大专",25],["法务专员",7105,"本科",24],["法务",9500,"本科",14],["稽查员",6500,"本科",14],["投标专员",5077,"大专",13],["法务专员助理/双休/不加班",9000,"本科",11],["执业律师",9950,"大专",10],["法务专员/双休/高薪/不加班",9000,"本科",10],["证券法务总监",32500,"本科",7]]},{"name":"德州","demand":339,"salary":7441,"jobCount":26,"jobs":[["6k风控专员+五险一金+管理晋升",9000,"学历不限",100],["投标专员",4500,"大专",24],["法院调解员",8250,"学历不限",20],["标书制作专员",5368,"大专",19],["法务",6500,"大专",17],["法务主管",12813,"本科",16],["工程招投标专员",8250,"大专",16],["招投标专员",4500,"大专",13],["招聘投标专员",5000,"本科",13],["山东创杰招聘全职法务",9000,"本科",11],["诚聘法务人员",8000,"本科",11],["法务专员",8636,"本科",11]]},{"name":"菏泽","demand":196,"salary":6380,"jobCount":19,"jobs":[["法务助理",4500,"学历不限",50],["标书文员",7000,"大专",27],["招投标文员",4500,"大专",19],["投标专员-机械设备（投标专员）",6000,"本科",15],["招标代理",6000,"本科",14],["集团法务经理",12909,"本科",11],["法务专员",7636,"本科",11],["法务经理",7500,"本科",9],["公司法务",8000,"大专",7],["高级法务经理",11500,"本科",6],["投标专员",7000,"大专",6],["法律顾问（菏泽及周边城市可兼职 ）",6250,"本科",4]]},{"name":"日照","demand":196,"salary":7000,"jobCount":12,"jobs":[["稽查",7500,"本科",120],["投标专员",5000,"大专",19],["公司法务",6583,"本科",12],["法务专员",7000,"本科",11],["集团法务",6500,"本科",9],["集团法务专员",7000,"本科",7],["企业法务专员",7400,"学历不限",5],["工程业务经理",4000,"大专",4],["风控专员",8000,"学历不限",3],["法务顾问",7000,"本科",3],["合伙人律师",5250,"本科",2],["项目招标员",5000,"大专",1]]},{"name":"东营","demand":195,"salary":7834,"jobCount":26,"jobs":[["商务投标专员",6412,"本科",34],["法务专员",6250,"本科",28],["稽核专员 退伍士官",7000,"大专",23],["招投标专员",6500,"大专",18],["投标专员",6000,"大专",12],["应届生",5000,"本科",11],["监理公司投标专员",5400,"本科",10],["法务主管",11000,"大专",9],["涉外法务专员",16500,"本科",8],["标书制作专员",6000,"大专",6],["招投标岗",12500,"本科",6],["律师",10500,"本科",5]]},{"name":"淄博","demand":185,"salary":5884,"jobCount":28,"jobs":[["投标专员",4381,"大专",63],["招投标专员",4140,"大专",25],["工程招投标经理",7786,"大专",14],["稽查外勤专员",4346,"大专",13],["法务专员",8889,"本科",9],["法务负责人",12375,"本科",8],["投标主管及办公室主管",5000,"本科",6],["物价员",6000,"本科",6],["企管法务专员",6500,"大专",5],["销售顾问",7000,"大专",5],["招标助理",5625,"学历不限",4],["商务标书专员",4500,"本科",3]]},{"name":"威海","demand":149,"salary":13819,"jobCount":29,"jobs":[["提成律师",25000,"本科",56],["市场拓展招投标文员",4500,"大专",13],["风控审计",9000,"本科",11],["招投标专员",5875,"本科",8],["风控核算专员",6000,"本科",8],["法务专员",6167,"本科",6],["法律咨询辅助岗位",3500,"本科",6],["投标专员",5250,"本科",6],["法务部长",10000,"本科",5],["律师助理",3500,"本科",4],["公司法务",7000,"本科",3],["法务负责人",25000,"硕士",3]]},{"name":"滨州","demand":143,"salary":7273,"jobCount":18,"jobs":[["法务专员",8050,"本科",40],["销售审核员",8000,"硕士",24],["商务投标专员",5000,"大专",12],["应急转贷风控经理",10000,"本科",10],["法务主管",7500,"硕士",9],["法务助理",4500,"大专",9],["合规管理专员",6167,"本科",6],["金融律师",9000,"学历不限",6],["标书主管",4500,"本科",6],["投标专员",5000,"本科",5],["招标项目经理",6500,"大专",4],["采购合规管理员",4500,"大专",3]]},{"name":"枣庄","demand":58,"salary":11328,"jobCount":8,"jobs":[["法务专员",8480,"本科",25],["法务经理",16000,"本科",21],["公司 法务专员6K-1万",9000,"本科",5],["兼职法务",15000,"本科",2],["标书文员",4000,"本科",2],["投标专员",4500,"大专",1],["法务经理/主管",6500,"本科",1],["执业律师实习律师有证",15000,"学历不限",1]]}]},"江苏":{"demand":18567,"salary":10471,"cityCount":13,"cities":[{"name":"苏州","demand":5896,"salary":10409,"jobCount":325,"jobs":[["检测鉴定工程师",1104,"大专",2100],["法务经理",22442,"本科",1030],["提成律师",16421,"本科",228],["实习律师",4901,"本科",211],["授薪律师",16954,"本科",185],["执业律师",12052,"本科",124],["风控审核经理+五险一金+9-6+周末双休",12500,"本科",110],["专职律师",14338,"本科",108],["法律顾问",11500,"学历不限",70],["精准客资+案源助理",9000,"学历不限",70],["技术工程师",7000,"大专",70],["建筑公司经营经理",9971,"大专",68]]},{"name":"南京","demand":4809,"salary":12105,"jobCount":471,"jobs":[["执业律师",14854,"本科",639],["招标代理项目经理",10428,"本科",299],["招投标专员",7188,"大专",250],["授薪律师",10996,"本科",137],["专职律师",12855,"本科",131],["法务专员",8369,"本科",130],["合伙人、律师",15500,"本科",120],["独立律师/提成律师",40000,"本科",120],["南京南站旁【独立律师】招募丨90%超高提成+破产公共案源支持",40000,"本科",120],["商务投标专员",6486,"大专",109],["招标分析师",8982,"本科",109],["全职、专职律师",12500,"本科",100]]},{"name":"南通","demand":2757,"salary":10101,"jobCount":78,"jobs":[["周末双休法律顾问",11500,"学历不限",690],["双休法律销售顾问",11500,"学历不限",480],["双休法律电话销售",7500,"学历不限",320],["双休法务咨询",11500,"大专",280],["双休法务专员",4606,"大专",179],["法务专员",6381,"大专",176],["执业律师",14996,"本科",136],["实习律师",4516,"本科",92],["授薪律师",11917,"本科",48],["专职律师",14310,"本科",42],["商务投标专员",5143,"大专",21],["标书员",5333,"大专",18]]},{"name":"扬州","demand":1133,"salary":8523,"jobCount":52,"jobs":[["法律顾问",7500,"大专",237],["销售经理",10500,"学历不限",190],["律师助理",6146,"本科",99],["法律咨询顾问",12000,"大专",75],["实习律师",6500,"本科",63],["法务管理岗",7000,"本科",60],["法务咨询销售经理",10500,"学历不限",50],["授薪律师",12500,"本科",34],["法务专员",5984,"本科",32],["内控管理岗",7000,"本科",30],["招投标专员",5983,"大专",29],["招投标主管",10000,"本科",27]]},{"name":"无锡","demand":979,"salary":10955,"jobCount":154,"jobs":[["法务专员",7514,"本科",111],["高薪法务顾问",9000,"学历不限",90],["招投标专员",5595,"大专",58],["律师助理",4674,"硕士",46],["法务经理/法务主管",25000,"本科",39],["实习律师",3274,"本科",39],["标前项目经理",20000,"大专",36],["高级风控经理",21500,"本科",28],["投标专员",5262,"大专",21],["合规专员",9214,"本科",21],["团队聘用律师",6500,"本科",20],["招投标文员",4500,"大专",18]]},{"name":"徐州","demand":847,"salary":7219,"jobCount":97,"jobs":[["实习律师",4214,"本科",84],["实习律师（邳州分所）",4000,"本科",70],["实习律师（贾汪分所）",4000,"本科",70],["风险控制管理",8786,"本科",56],["风控管理",8712,"本科",52],["法务专员",6490,"学历不限",50],["风控经理",9000,"本科",45],["采购稽查专员",10750,"本科",24],["律师助理",4304,"大专",23],["法务风控管理",8810,"本科",21],["投标专员",5053,"大专",19],["商务投标专员",8444,"本科",18]]},{"name":"常州","demand":567,"salary":8723,"jobCount":87,"jobs":[["招投标专员",7992,"大专",64],["逾期提醒专员+五险一金+带薪培训",9500,"高中",60],["投标专员",6143,"大专",28],["法律顾问",7000,"学历不限",20],["矛盾纠纷调解员",6000,"大专",20],["人民调解员",6000,"大专",20],["调解员",6000,"大专",20],["投标造价员",6167,"大专",18],["投标预决算",10000,"本科",18],["合规专员",4700,"大专",15],["法务主管",13036,"本科",14],["企业法务专员",12385,"本科",13]]},{"name":"泰州","demand":431,"salary":12868,"jobCount":39,"jobs":[["招投标专员",6041,"大专",61],["董助兼法律专员",15000,"本科",60],["实习律师",3103,"本科",51],["法务专员",6269,"本科",26],["外派泰州分所律师+免费提供住宿",32500,"本科",25],["董助兼法律顾问",15000,"本科",20],["投标主管——泰州",6528,"大专",18],["合规专员",7250,"本科",18],["招标代理",6000,"大专",16],["法务主管",11200,"本科",15],["法务经理",18750,"本科",12],["一级合伙人",40000,"本科",12]]},{"name":"连云港","demand":404,"salary":7751,"jobCount":35,"jobs":[["招投标专员",4978,"大专",92],["法务专员",7931,"本科",72],["投标商务文员",5500,"大专",42],["投标专员",7517,"本科",29],["规划设计招投标人员",6000,"大专",22],["项目招投标专员",4500,"大专",20],["招标代理",11500,"大专",14],["标书主管",7000,"大专",12],["法务助理",4500,"大专",11],["实习律师",5333,"本科",9],["法务专员/主管",15000,"本科",8],["合同法务",8000,"本科",7]]},{"name":"淮安","demand":281,"salary":7661,"jobCount":33,"jobs":[["法务专员",8703,"本科",37],["法律销售顾问",7000,"学历不限",30],["造价员",4500,"本科",26],["项目招投标专员",6375,"大专",24],["无责底薪4k律助",8000,"学历不限",20],["诚聘高薪律助",7000,"学历不限",20],["招投标助理",6500,"大专",18],["法务合规主管",8500,"本科",16],["内控专员",9500,"本科",14],["风控专员",8000,"本科",13],["法务",7500,"本科",8],["律师助理",10785,"学历不限",7]]},{"name":"盐城","demand":190,"salary":7141,"jobCount":23,"jobs":[["钢结构预算员",7500,"本科",60],["标书专员",5000,"大专",19],["办公室文员内勤",3500,"学历不限",14],["商务投标专员",4500,"大专",14],["办公室投标文员",5000,"本科",14],["合规管理",7000,"本科",8],["法务经理",20000,"本科",8],["标书制作",5000,"大专",7],["法务专员（江苏盐城+五险一金+周末双休）",8000,"大专",6],["监察经理",16500,"本科",6],["除尘脱硫脱硝标书制作专员",7000,"大专",5],["法务助理",150,"本科",5]]},{"name":"宿迁","demand":145,"salary":14745,"jobCount":13,"jobs":[["法务经理（异地工作：江苏宿迁）",21500,"本科",36],["法务经理（异地招聘：江苏宿迁）",21500,"本科",33],["法务经理",16250,"本科",16],["法务专员",6500,"本科",14],["公司法务",8000,"本科",14],["商务标书专员",5500,"本科",11],["单双休法务专员",5750,"学历不限",6],["投标专员",5000,"大专",4],["法务",9000,"硕士",4],["招投标专员",5000,"大专",4],["律师",9000,"本科",1],["医药招标专员",6500,"本科",1]]},{"name":"镇江","demand":128,"salary":9434,"jobCount":26,"jobs":[["招投标专员",5250,"本科",20],["招标投标项目经理",9176,"大专",17],["法务",10912,"硕士",17],["商务专员（招投标）",12000,"本科",15],["法务专员",8000,"本科",13],["集团法务经理",12500,"本科",10],["法务销售专员（双休）",10500,"大专",5],["投标制作员",5500,"大专",4],["工程招投标专员",4500,"本科",3],["法务高级专员1名（内控）",15000,"本科",2],["集团法务部-法务岗",6500,"本科",2],["商务投标项目经理",8000,"大专",2]]}]},"河南":{"demand":18081,"salary":9247,"cityCount":17,"cities":[{"name":"郑州","demand":13845,"salary":10167,"jobCount":872,"jobs":[["提成律师",11784,"本科",1754],["实习律师",3160,"本科",1130],["专职律师",14885,"本科",827],["执业律师",12269,"本科",765],["退伍军人岗（五险一金高提成）",10243,"大专",370],["律师助理",5532,"大专",286],["授薪律师",9831,"本科",248],["招投标专员",5229,"大专",242],["法律顾问",12538,"中专/中技",183],["标书制作专员",5731,"大专",173],["律所提供案源（提成律师）",12000,"本科",160],["法务专员",7524,"本科",145]]},{"name":"洛阳","demand":1027,"salary":6118,"jobCount":80,"jobs":[["内控主管",3500,"学历不限",120],["法院调解员 不加班 入职五险一金",6049,"大专",82],["法院调解员",6000,"大专",80],["工程招投标",7699,"学历不限",78],["技术标书制作专员",8224,"学历不限",58],["标书专员",4760,"大专",52],["标书文员",3957,"大专",46],["标书制作专员",3718,"大专",39],["实习律师",3614,"本科",35],["招投标业务",7500,"大专",26],["法务专员",4900,"本科",20],["高薪诚聘案源拓展-洛阳/郑州均可",15000,"大专",20]]},{"name":"许昌","demand":684,"salary":5698,"jobCount":30,"jobs":[["投标专员",4404,"大专",135],["标书专员",4260,"大专",77],["招投标专员",5070,"大专",57],["电力工程投标专员",4500,"本科",51],["报价/标书工程师",6000,"本科",40],["商务投标专员",4947,"大专",38],["法务专员助理",5000,"大专",34],["法务合规专员",12000,"本科",32],["标书制作人员",9000,"大专",30],["法务专员",6130,"本科",23],["内控合规专员",6000,"本科",23],["诉讼专员",12000,"本科",20]]},{"name":"安阳","demand":483,"salary":7067,"jobCount":73,"jobs":[["授薪律师",7603,"学历不限",68],["建筑投标业务员",9000,"学历不限",55],["标书制作员",6000,"本科",30],["经营经理",6000,"本科",25],["合规专员",5000,"本科",25],["法务专员",5289,"本科",19],["顾问律师",8083,"本科",18],["集团法务专员",5000,"本科",16],["平顶山授薪律师",9500,"本科",15],["投标专员（工程类）",4000,"大专",10],["招投标业务经理",5000,"大专",10],["实习律师-就近安排",3000,"学历不限",10]]},{"name":"南阳","demand":408,"salary":6701,"jobCount":25,"jobs":[["律所顾问双休",6000,"学历不限",51],["实习律师",3896,"本科",48],["双休律所客服",6000,"大专",46],["法务",7891,"本科",46],["法务助理",9000,"学历不限",43],["大健康赛道-市场稽查（ 五险+13薪）",7000,"大专",30],["投标员（技术标编制）",8000,"大专",22],["法务专员",4762,"本科",21],["招投标专员",5906,"本科",16],["律师助理双休",3500,"学历不限",13],["法律咨询",6000,"学历不限",12],["投标资料员",5000,"本科",10]]},{"name":"平顶山","demand":335,"salary":7104,"jobCount":27,"jobs":[["聘法务顾问 月休6天+法定假",9000,"中专/中技",165],["招投标专员",4111,"大专",36],["招投标主管",5000,"大专",18],["律师助理",4500,"大专",14],["招投标经理",5000,"大专",12],["邀约客服专员",4500,"学历不限",10],["土建预算员",6000,"大专",9],["督查员-退伍军人",3500,"本科",8],["公司法务",6500,"本科",8],["法务顾问",4000,"学历不限",8],["授薪律师",7500,"本科",7],["法务律师",6500,"本科",6]]},{"name":"新乡","demand":304,"salary":6961,"jobCount":46,"jobs":[["法务专员",5741,"本科",85],["标书制作专员",7824,"大专",34],["投标员造价员",8250,"本科",24],["标书制作员",6885,"大专",13],["标书专员",4500,"大专",11],["双休-法律顾问",7000,"大专",11],["法务经理",22500,"本科",10],["招投标专员（项目招投标）",6500,"中专/中技",10],["双休-法务顾问/电话销售/法务推广员",8000,"大专",7],["标书制作及资质管理专员",5000,"大专",7],["专职律师",5500,"本科",6],["投标资料员",4500,"大专",6]]},{"name":"濮阳","demand":221,"salary":5919,"jobCount":17,"jobs":[["标书专员",6000,"大专",45],["投标专员",6000,"大专",42],["货物投标",6000,"大专",42],["线上投标专员",6000,"大专",39],["法务专员",5500,"本科",21],["合同法务专员",4500,"本科",8],["商务投标岗",6000,"本科",6],["法务主管（外派新疆）",12500,"本科",3],["标书制作专员",3500,"本科",3],["业务经理招聘",6000,"本科",3],["招投标专员",4500,"大专",2],["商务投标专员",5000,"大专",2]]},{"name":"周口","demand":174,"salary":6698,"jobCount":25,"jobs":[["招投标专员",6366,"大专",56],["企业律师",7205,"本科",22],["执业律师",7250,"本科",12],["法务合规经理",7500,"本科",10],["督查专员",6500,"大专",9],["招采人员",6500,"大专",9],["投标专员",4500,"大专",7],["资深法务（项城）",8000,"本科",5],["专职执业律师及独立执业律师",7500,"本科",4],["律师助理",4000,"本科",4],["公司法务",9375,"本科",4],["知识产权岗",6500,"本科",4]]},{"name":"商丘","demand":157,"salary":4507,"jobCount":20,"jobs":[["月休八天的法务助理",4000,"大专",65],["标书文员",5000,"本科",23],["投标业务员",5000,"大专",22],["法务经理",6313,"本科",8],["标书员（天津南开区）",5000,"本科",5],["招投标资料员",3500,"大专",5],["法务专员",5000,"本科",4],["投标员资料员",4500,"本科",4],["建筑投标业务员",5500,"大专",3],["投标资料员",4500,"大专",3],["标书员",6000,"大专",3],["法律实习生",50,"本科",2]]},{"name":"开封","demand":105,"salary":5424,"jobCount":16,"jobs":[["法务主任",6000,"本科",29],["法务专员",4763,"本科",19],["法务主办",6000,"本科",10],["法务",4000,"大专",10],["投标市场经营业务员",6000,"大专",6],["编制标书及商务投标专员",5500,"大专",5],["医疗器械招投标专员",4000,"学历不限",5],["招聘法律行业谈案专员（不接受没有销售经验者）",7500,"学历不限",4],["见习律师",4500,"本科",4],["律师助理",4000,"本科",4],["法务主办/专员",6000,"本科",3],["招投标专员",6000,"大专",2]]},{"name":"漯河","demand":97,"salary":4395,"jobCount":10,"jobs":[["实习律师",72,"本科",26],["专职律师",4625,"本科",24],["招投标专员",6000,"本科",20],["标书专员",4500,"大专",11],["投标经理",12500,"大专",5],["营销稽查",7125,"本科",4],["国网标书专员",8500,"大专",3],["合伙人律师",7500,"本科",2],["破产业务团队律师",5500,"本科",1],["法务专员",7000,"本科",1]]},{"name":"信阳","demand":72,"salary":5250,"jobCount":10,"jobs":[["公司法务",4653,"本科",36],["招标代理专员",4000,"大专",9],["法务专员",5500,"本科",6],["法务经理",6000,"本科",5],["公司法务助理",7500,"本科",5],["法务",5250,"大专",4],["企业法务专员",5750,"大专",2],["造价工程师",7500,"本科",2],["法务专员/主管",10000,"硕士",2],["工程招投标专员/资料员",6500,"大专",1]]},{"name":"焦作","demand":66,"salary":5447,"jobCount":12,"jobs":[["海外商务投标专员",5000,"本科",16],["企业法务专员",4500,"大专",11],["招投标专员",3000,"大专",10],["法务风控岗",8278,"本科",9],["带量招标专员",3500,"大专",6],["公司法务",11700,"本科",5],["工程制作标书员",4000,"学历不限",2],["制度流程督查专员",6000,"本科",2],["诚聘办公室医疗招投标文员",4000,"大专",2],["合规管理专员",5500,"本科",1],["招标主管/招标经理",7000,"本科",1],["金四合规师",5500,"大专",1]]},{"name":"驻马店","demand":65,"salary":7292,"jobCount":16,"jobs":[["法务专家（双休+五险一金）",10000,"本科",16],["企业法务专员",4458,"本科",12],["商务标书专员",4000,"大专",8],["商务投标专员",6500,"本科",5],["投标文员",7500,"高中",4],["合规风控主管",4500,"大专",4],["法务主管",8000,"本科",3],["法务经理",12000,"硕士",2],["建筑标书制作专员",5000,"本科",2],["风控部专员",4500,"学历不限",2],["法务专家",10750,"本科",2],["合规风控负责人",4000,"本科",1]]},{"name":"鹤壁","demand":29,"salary":6000,"jobCount":2,"jobs":[["装饰投标预算员",6000,"大专",28],["证券法务专员",6000,"本科",1]]},{"name":"三门峡","demand":9,"salary":5000,"jobCount":1,"jobs":[["企业法务专员",5000,"本科",9]]}]},"四川":{"demand":17441,"salary":10305,"cityCount":20,"cities":[{"name":"成都","demand":15773,"salary":10477,"jobCount":1210,"jobs":[["法务实习生",125,"本科",1001],["律师助理",3967,"本科",667],["提成律师",16744,"本科",595],["专职律师",12020,"本科",509],["账号违规查询处理",5500,"中专/中技",495],["授薪律师",10744,"本科",395],["独立律师",15648,"本科",288],["高薪诚聘律师事务所律师（底薪+提成）",16500,"本科",280],["实习律师",2873,"本科",272],["招投标专员",6125,"大专",267],["实习律师/律师助理",2295,"学历不限",253],["招律师助理：可实习备案",5000,"本科",200]]},{"name":"绵阳","demand":697,"salary":8628,"jobCount":39,"jobs":[["法律销售顾问",10500,"学历不限",126],["实习律师",5000,"本科",105],["执业律师",9945,"本科",91],["授薪律师",11321,"本科",53],["提成律师",15000,"本科",50],["标书专员",8000,"大专",26],["招投标专员",5250,"大专",22],["法务管理岗",7048,"本科",21],["法务行政专员/助理 双休",3500,"大专",19],["合规与风控专员",5500,"本科",17],["投标专员",6500,"高中",16],["企业法律咨询顾问",4500,"大专",16]]},{"name":"眉山","demand":238,"salary":9244,"jobCount":28,"jobs":[["法律领域专家（线上兼职+100-200/小时）",8000,"本科",90],["法律领域专家线上兼职100-200/小时",8000,"本科",30],["专职律师/授薪律师",15000,"本科",30],["法务专员",5853,"本科",17],["法务",12000,"本科",8],["律师助理",3786,"本科",7],["商务投标专员",4500,"大专",6],["招采管理岗",9000,"本科",5],["投标管理岗",12000,"硕士",4],["法务管理岗",11000,"硕士",4],["公司法务",12500,"本科",4],["工程招投标专员（工资面议）",5000,"大专",4]]},{"name":"德阳","demand":195,"salary":7915,"jobCount":33,"jobs":[["商务投标专员",5933,"大专",67],["投标合约主管",10000,"大专",16],["【急聘】标书专员（双休·六险一金）",5500,"大专",13],["招投标专员（劳务派遣）",5818,"本科",11],["集团风控专员",12000,"本科",11],["律师助理",6500,"大专",10],["四川宏达股份有限公司内控法务部副部长",16000,"本科",7],["招投标专员",5667,"大专",6],["提成律师",10000,"本科",6],["四川宏达股份有限公司内控法务部法律事务岗",8500,"硕士",5],["双休 / 提成律师 /案源充足",7500,"本科",5],["急招 授薪律师（能独立完成案件优先）",16500,"本科",4]]},{"name":"泸州","demand":129,"salary":7496,"jobCount":18,"jobs":[["法务专员",5000,"本科",27],["法务主管",9324,"本科",17],["风控法务专员",6500,"本科",17],["风控主管",13500,"本科",16],["法务助理",2500,"学历不限",10],["法务经理",5500,"本科",10],["法务岗",11500,"本科",6],["法律顾问",8500,"大专",5],["办案律师",8500,"本科",4],["企业法务专员（国资公司+免费食堂）",4000,"本科",4],["法务主管（物业、投融、工程背景）",13000,"本科",3],["标书制作专员",5000,"本科",2]]},{"name":"宜宾","demand":123,"salary":9455,"jobCount":22,"jobs":[["企业法务专员",7765,"大专",17],["招投标专员",6500,"本科",17],["招投标经理",9000,"大专",15],["工程商务/五险/5-12K/节假日福利",7500,"大专",13],["标书制作员",4000,"大专",11],["招标部经理",9000,"大专",7],["法务合规专员（印尼基地）",15000,"本科",7],["法务主管（驻外岗位）",20000,"本科",6],["招标投标专员",5500,"大专",5],["法务经理",18250,"本科",4],["高级合规专员",15000,"本科",3],["工程招投标专员",8500,"学历不限",3]]},{"name":"阿坝","demand":53,"salary":11402,"jobCount":13,"jobs":[["法务总监",36250,"本科",12],["律师助理实习生",87,"学历不限",9],["律师助理",3563,"大专",8],["法务主管",14643,"大专",7],["法律实习生",55,"学历不限",5],["执业律师",6000,"本科",2],["法考落户放宽地区专员",4500,"学历不限",2],["法学学生实习",70,"学历不限",2],["派驻律师业务销售",2000,"学历不限",2],["派驻律师助理",3000,"学历不限",1],["授薪律师",6000,"本科",1],["律师助理/人工智能",3000,"大专",1]]},{"name":"乐山","demand":44,"salary":11034,"jobCount":10,"jobs":[["法务",10458,"大专",12],["高级法务专员",11500,"本科",8],["招投标专员",9000,"大专",5],["法务主管",7500,"本科",4],["法务专员",8000,"本科",4],["专职律师",27500,"本科",4],["风控内控专员",7500,"本科",3],["司法协理员",2500,"大专",2],["法务经理",15000,"本科",1],["专职执业律师",8500,"学历不限",1]]},{"name":"遂宁","demand":42,"salary":7429,"jobCount":9,"jobs":[["法务专员",8000,"本科",9],["风控经理",6500,"本科",9],["招投标专员",6000,"大专",8],["投标预算员",6857,"大专",7],["投标资料员",4000,"大专",3],["合伙人律师",15000,"本科",3],["风控法务主管",11500,"大专",1],["执业律师",9000,"本科",1],["法务主管",8000,"大专",1]]},{"name":"攀枝花","demand":35,"salary":8229,"jobCount":3,"jobs":[["风控合规主管",8600,"本科",30],["提成律师",6000,"本科",3],["合作律师",6000,"本科",2]]},{"name":"雅安","demand":26,"salary":8423,"jobCount":5,"jobs":[["市场开发部招投标预算岗",7500,"大专",10],["风险管理/可带朋友/年终奖/月薪8000",11500,"大专",10],["见习生（造价、设计、监理、行政、会计）",2500,"学历不限",3],["法务风控岗",6000,"本科",2],["土建造价工程师",9500,"大专",1]]},{"name":"广安","demand":22,"salary":8841,"jobCount":7,"jobs":[["标书制作专员",4000,"大专",16],["贸易合规经理",32500,"本科",1],["招标代理员（发展咨询公司）",6000,"本科",1],["法律事务管理岗",9000,"本科",1],["运营中心副经理（合规）",20000,"本科",1],["管理中心副经理（海外贸易合规）",31500,"本科",1],["管理中心副经理（国际贸易合规）",31500,"本科",1]]},{"name":"内江","demand":14,"salary":5393,"jobCount":4,"jobs":[["法务专员",5100,"本科",10],["招投标管理岗",5000,"本科",2],["法务岗",5000,"本科",1],["监察专员",9500,"本科",1]]},{"name":"甘孜","demand":12,"salary":7083,"jobCount":5,"jobs":[["法务后勤岗",5000,"本科",5],["总经理助理法务助理",8500,"本科",3],["风控部副部长",8500,"本科",2],["总经理助理",8500,"本科",1],["投标预算员",9000,"大专",1]]},{"name":"自贡","demand":12,"salary":8500,"jobCount":3,"jobs":[["公司法务",9000,"硕士",10],["投标专员（销售支持）",7000,"本科",1],["标书制作专员",5000,"大专",1]]},{"name":"南充","demand":10,"salary":7200,"jobCount":3,"jobs":[["法务专员",4500,"本科",8],["海外法务",17500,"本科",1],["高级风控法务经理",18500,"本科",1]]},{"name":"资阳","demand":6,"salary":8250,"jobCount":4,"jobs":[["招投标专员",7000,"大专",2],["法务主管",10000,"硕士",2],["药品招标员",5000,"大专",1],["招标代理项目主管",10500,"高中",1]]},{"name":"凉山","demand":5,"salary":5400,"jobCount":3,"jobs":[["招投标专员",5000,"大专",2],["风控专员",5500,"大专",2],["法务专员（代招）",6000,"大专",1]]},{"name":"巴中","demand":3,"salary":5833,"jobCount":2,"jobs":[["法务",6000,"本科",2],["工程内勤",5500,"大专",1]]},{"name":"广元","demand":2,"salary":30000,"jobCount":1,"jobs":[["合规",30000,"本科",2]]}]},"上海":{"demand":13100,"salary":24057,"cityCount":1,"cities":[{"name":"上海","demand":13100,"salary":24057,"jobCount":1006,"jobs":[["独立（提成）律师",45000,"本科",1050],["独立律师",19513,"学历不限",1009],["风控/内审/稽核经理",22500,"本科",999],["内控合规",40000,"本科",999],["提成律师",31511,"本科",605],["授薪律师",13795,"本科",292],["执业律师",34604,"本科",222],["法务专员",10410,"本科",217],["律师助理",4967,"本科",166],["提成律师，提供丰富案源",67500,"本科",150],["招标代理、造价咨询、施工监理实习生",160,"本科",138],["招标代理专员",7857,"本科",105]]}]},"浙江":{"demand":11159,"salary":15215,"cityCount":11,"cities":[{"name":"金华","demand":4517,"salary":21094,"jobCount":34,"jobs":[["法务高级专员（浙江）",15000,"本科",1998],["法务高级经理（浙江）",30000,"硕士",1998],["接受小白+提供精准资源+法律顾问",10000,"大专",90],["法务专员",9419,"本科",80],["授薪律师",15000,"本科",60],["招投标工程师",7000,"大专",48],["律师助理",10500,"本科",40],["法律咨询顾问",10500,"中专/中技",30],["招标代理专员",9167,"本科",27],["执业律师",15000,"本科",20],["医药市场准入经理",10000,"本科",16],["标书专员",9500,"大专",16]]},{"name":"杭州","demand":3905,"salary":11808,"jobCount":377,"jobs":[["风险咨询岗-内控咨询",10500,"本科",999],["律师助理",7378,"本科",278],["律师助理（业务方向）",10000,"大专",130],["律师助理（未过司考的伙伴）",10000,"本科",130],["授薪律师",13444,"本科",125],["招标代理专员",9811,"大专",103],["提成律师",56404,"本科",99],["调解员",7757,"学历不限",76],["招投标专员",7671,"大专",73],["法务专员",8577,"本科",71],["谈案顾问（意向案源充足，无需主动开发）",10500,"本科",60],["投标专员",7142,"大专",55]]},{"name":"宁波","demand":1341,"salary":10998,"jobCount":107,"jobs":[["科技大厂合同管理+周末双休+五险一金",10000,"本科",500],["法律顾问",12036,"本科",193],["法律销售",12000,"本科",190],["团队执业律师",22500,"本科",60],["法务专员",8159,"本科",22],["招标助理（云南）",5000,"本科",20],["招标代理专员",16789,"大专",19],["法务运营助理",5556,"本科",18],["法务助理",6167,"本科",18],["风控法务经理",25000,"硕士",12],["授薪律师",7318,"本科",11],["招投标专员",2807,"大专",11]]},{"name":"嘉兴","demand":378,"salary":7300,"jobCount":41,"jobs":[["招投标人员（接受应届实习生）",4500,"大专",150],["工程招投标",6000,"本科",30],["懂工程组价的投标岗",9000,"本科",20],["标书文员",7500,"大专",20],["法务专员",8147,"本科",17],["工程招投标专员",6000,"本科",15],["招标业务岗",10375,"大专",12],["ESG合规专员",15000,"本科",12],["招标代理人员",8000,"大专",10],["风险控制岗",11333,"本科",9],["商务投标专员",7000,"大专",9],["招标代理专员",5000,"大专",8]]},{"name":"温州","demand":362,"salary":10488,"jobCount":61,"jobs":[["投标（技术标）",12808,"大专",39],["法务总监",17986,"本科",36],["法务主管",9636,"本科",22],["土建技术标主编",10500,"大专",18],["安装投标专员/安装造价员",9000,"大专",16],["总包-安装投标员",8000,"本科",16],["标书专员",8300,"大专",15],["标书制作员",6107,"大专",14],["投标专员",5962,"大专",13],["投标经营管理",9708,"大专",12],["法务高级经理",19000,"本科",10],["机电安装投标员",9000,"大专",10]]},{"name":"绍兴","demand":246,"salary":10949,"jobCount":34,"jobs":[["法务专员",11534,"本科",59],["法务",10725,"本科",40],["招标专员",6000,"大专",21],["项目招投标专员",5000,"大专",20],["一级建造师1.1W-1.5W",13000,"学历不限",10],["法务经理",27500,"本科",9],["内控部部长",17500,"大专",7],["新和成控股集团有限公司 法务专员",9000,"硕士",6],["投标支持专员（周末双休）",6500,"大专",6],["法律顾问",15000,"学历不限",6],["集团法务高级经理",22500,"本科",5],["招投标专员",7600,"大专",5]]},{"name":"台州","demand":144,"salary":9201,"jobCount":21,"jobs":[["授薪律师",10500,"本科",60],["法务专员",5429,"大专",21],["招标代理专员",9000,"本科",13],["法务经理",16000,"本科",10],["律师助理（已过法考）",4500,"本科",6],["招投标专员",5400,"大专",5],["市场稽查副部长",13500,"本科",4],["企业督察员（台州温岭工作免费食宿）",6500,"学历不限",4],["投标专员兼行政内勤",5000,"大专",3],["招标代理工程师",10500,"本科",2],["招标代理项目负责人（临海）",9000,"大专",2],["招标代理（实习）",2500,"本科",2]]},{"name":"衢州","demand":123,"salary":7752,"jobCount":16,"jobs":[["法务专员",7986,"本科",36],["投标专员",7500,"本科",22],["招投标专员",7382,"大专",17],["投标标书制作兼文员",7500,"学历不限",12],["标书制作专员",7000,"高中",8],["电力工程投标专员",4500,"大专",7],["招标代理专员",6000,"大专",5],["经营部投标专员",6000,"大专",4],["投标员",5500,"本科",3],["综合法务（建设工程方向）",13000,"本科",2],["集团法务经理",19000,"本科",2],["投标跟单员",7000,"学历不限",1]]},{"name":"湖州","demand":81,"salary":17210,"jobCount":20,"jobs":[["委派监察区域负责人",30000,"大专",17],["国网投标项目经理",11667,"本科",12],["公司法务专员",8000,"本科",9],["投标部文员",6000,"高中",6],["法务管理",7500,"本科",6],["内控合规专员",8500,"本科",5],["科尔卡诺招投标总监",15000,"本科",4],["法务主管/专员",15000,"本科",3],["市场督查经理",20000,"本科",3],["招投标专员",6500,"大专",3],["营销稽查支持经理",15000,"本科",2],["法务经理",19500,"大专",2]]},{"name":"丽水","demand":49,"salary":10184,"jobCount":16,"jobs":[["工程招投标",8000,"大专",10],["公司法务",8500,"本科",5],["标书专员",6000,"本科",4],["投标专员",5000,"大专",4],["法务专员/董事长秘书",8500,"本科",4],["子公司法务经理（工作地点：内蒙古：乌兰察布/巴彦淖尔）",12500,"本科",4],["子公司法务经理（工作地点：内蒙古：乌兰察布/巴彦淖尔/赤峰）",15000,"本科",3],["经营业务员",9000,"大专",3],["商务投标专员",6000,"本科",3],["材料招标员",4500,"大专",3],["招标项目负责人（矿业 行业）",22500,"本科",1],["招标经理",12500,"本科",1]]},{"name":"舟山","demand":13,"salary":17615,"jobCount":2,"jobs":[["法务主管",21667,"本科",9],["公司法务（校园招聘）",8500,"本科",4]]}]},"河北":{"demand":9561,"salary":7686,"cityCount":11,"cities":[{"name":"石家庄","demand":4049,"salary":8998,"jobCount":352,"jobs":[["专职律师",11713,"本科",458],["实习律师",4281,"本科",226],["直播律师",17902,"学历不限",205],["律师助理",4166,"本科",179],["提供精准客源/五险/入职有人带/法务助理",9000,"学历不限",150],["执业提成律师",20000,"学历不限",150],["信用卡批量诉讼业务合作律师",15000,"本科",143],["招投标专员",4977,"大专",111],["执业律师",10011,"本科",95],["无责底薪/坐班/轻松无压力/法务助理",9000,"学历不限",88],["标书制作专员",5089,"大专",79],["投标专员",5721,"大专",77]]},{"name":"保定","demand":2819,"salary":5957,"jobCount":135,"jobs":[["法务专员",5012,"本科",2020],["法律咨询顾问销售",9500,"中专/中技",80],["法律电销",9500,"学历不限",51],["底3双休五险法律顾问",9000,"大专",34],["合规专员",5000,"大专",31],["标书专员",4258,"大专",31],["实习律师",1173,"本科",26],["招标助理",4000,"大专",25],["法律顾问",16250,"大专",24],["双休长经验法务专员",5000,"大专",23],["执业律师",9286,"本科",21],["法务经理",14150,"本科",20]]},{"name":"沧州","demand":501,"salary":9113,"jobCount":53,"jobs":[["司法鉴定法医助理",4500,"大专",78],["法务专员",5707,"本科",70],["法务专员、经理",13500,"本科",40],["监察专员",5711,"大专",38],["知产律师",12500,"本科",30],["高薪律师合伙人",27000,"本科",15],["知识产权策划师（保险+双休+年终奖+午餐）",20000,"本科",15],["商务文员",3500,"本科",13],["法务总监/经理",22500,"本科",12],["招标专员",4000,"大专",11],["法务主管",13000,"本科",10],["法务主管/经理",19500,"本科",10]]},{"name":"唐山","demand":472,"salary":6959,"jobCount":52,"jobs":[["长白班双休风控文职",4000,"大专",98],["法务专员",7488,"本科",85],["法务",11262,"本科",42],["投标专员（五险一金+双休+单项提成）",5500,"大专",42],["高级标书内勤",5500,"本科",22],["招投标（双休＋五险一金+提成）",6500,"大专",18],["监察专员",4500,"本科",18],["招投标专员",4179,"大专",14],["投标专员",7000,"大专",10],["法务经理",13800,"本科",10],["业务主管（滦州）",6000,"大专",8],["投标业务员",6000,"大专",7]]},{"name":"邯郸","demand":361,"salary":6778,"jobCount":35,"jobs":[["投标专员",4100,"大专",50],["公司法务",5750,"大专",40],["法律顾问",10500,"学历不限",40],["招投标专员",4744,"本科",39],["法务专员",4885,"本科",39],["法务主管/经理",15000,"本科",27],["法务主管",7000,"大专",26],["监理投标专员",3625,"大专",24],["标书制作专员",6167,"大专",9],["物业市场招投标主管",10438,"本科",8],["法务顾问",4500,"大专",8],["法务经理（对外关系经理）",12500,"本科",8]]},{"name":"秦皇岛","demand":330,"salary":6223,"jobCount":24,"jobs":[["标书制作文员",4000,"大专",126],["法务专员",5327,"本科",26],["标书专员",4500,"大专",26],["投标内勤文员",3500,"大专",17],["风控法务主管",9000,"本科",14],["公司法务",4923,"大专",13],["风控法务经理",11000,"本科",13],["招标代理专员",4000,"大专",12],["标书制作专员",4500,"大专",11],["招投标专员",4000,"大专",10],["法务经理",30000,"硕士",9],["企业律师",9000,"本科",7]]},{"name":"廊坊","demand":307,"salary":6429,"jobCount":52,"jobs":[["【天津市】月结3800/月 法院协助",3500,"本科",60],["【贵阳市】周结130/天法院助理",1503,"学历不限",27],["法律行业招聘销售顾问（双休，法休）",8500,"学历不限",20],["商务投标专员",5071,"大专",14],["风控经理",7500,"大专",14],["房地产公司招标专员（海外）",12500,"本科",12],["招标代理专员",4909,"大专",11],["商务招投标专员",7000,"大专",9],["招投标专员",9000,"大专",8],["法务总监",17500,"本科",8],["标书文员",4000,"大专",8],["法务专员",8563,"本科",8]]},{"name":"衡水","demand":288,"salary":7316,"jobCount":29,"jobs":[["法务助理",5000,"本科",75],["专职律师",7000,"本科",30],["律师",10500,"本科",30],["法务专员",7722,"本科",27],["医疗器械标书专员",4500,"本科",20],["法务经理",17500,"本科",15],["精装修招标采购",20300,"本科",10],["招投标专员",4500,"大专",8],["工薪律师",4500,"本科",6],["法务清欠",7500,"大专",6],["标书制作专员",4333,"学历不限",6],["回款业务员",6000,"大专",6]]},{"name":"邢台","demand":256,"salary":5357,"jobCount":35,"jobs":[["法务专员",5926,"本科",54],["法学 - 实习生/助理",3000,"本科",30],["法务专员/主管",5500,"本科",20],["检核主管/专员",5000,"本科",15],["法学本科 - 实习生/助理【坐班文职】",3000,"本科",15],["公司法务",4500,"本科",13],["标书制作专员",5500,"本科",12],["法务经理",9600,"本科",10],["法务",4500,"本科",10],["法务主管",10000,"本科",7],["实习律师 / 律师助理 【通过法考有A证】",4000,"本科",6],["招投标专员",6667,"大专",6]]},{"name":"张家口","demand":140,"salary":5853,"jobCount":23,"jobs":[["电力行业招投标主管",15000,"本科",19],["企业法务专员",5056,"大专",18],["双休-执业律师（也招应届实习生）",4000,"本科",14],["法务专员",5346,"本科",13],["督查",4000,"本科",10],["执业/实习律师-双休",4000,"本科",7],["招标代理专员",4500,"大专",7],["法务经理",5500,"本科",7],["招投标商务专员",4500,"大专",6],["执业律师-双休",4000,"本科",6],["招投标专员",5000,"大专",5],["实习律师",1072,"本科",5]]},{"name":"承德","demand":38,"salary":42949,"jobCount":12,"jobs":[["招投标专员",4500,"大专",10],["投标专员兼销售内勤",5500,"本科",8],["企业法律顾问",4500,"大专",5],["法院话务员",2500,"本科",4],["非诉法务经理",245000,"本科",2],["法务专员",3537,"本科",2],["诉讼法务经理",245000,"本科",2],["法务经理",245000,"硕士",1],["企业法务经理/主管",11000,"本科",1],["安全策略运营（外包岗，风控运营规则运营方向）",11000,"学历不限",1],["电商风控运营+外包",11500,"本科",1],["法务经理(人力劳动关系方向)",245000,"硕士",1]]}]},"陕西":{"demand":8658,"salary":29175,"cityCount":10,"cities":[{"name":"西安","demand":7835,"salary":30072,"jobCount":535,"jobs":[["提成律师",203985,"本科",862],["实习律师",4607,"本科",765],["律师助理",4888,"本科",389],["执业律师",9285,"本科",381],["【无责4k】五险一金+法院诉前调解员",10500,"大专",350],["授薪律师",9107,"硕士",333],["招投标专员",5163,"本科",236],["投标专员",5394,"本科",231],["独立律师",18945,"本科",165],["法务专员",6203,"本科",155],["律师助理/谈案律师/不要求法考",7000,"本科",144],["标书制作专员",5906,"本科",133]]},{"name":"西咸新区","demand":432,"salary":33081,"jobCount":26,"jobs":[["制氮机项目线上投标员",6000,"大专",108],["执业律师及独立执业律师",75000,"本科",90],["执业律师",92500,"学历不限",57],["授薪律师",9000,"本科",40],["设备投标工程师",6000,"本科",24],["实习律师",3184,"本科",19],["空港新城编制标书及商务投标文员",5500,"本科",19],["商务投标专员",9000,"大专",12],["项目投标经理",6000,"学历不限",12],["独立律师（所里有大量案源）",22500,"本科",9],["招采经理（工程）",9000,"大专",7],["招投标专员",5000,"大专",7]]},{"name":"榆林","demand":127,"salary":5925,"jobCount":13,"jobs":[["合同专员",7000,"本科",34],["经营专员",6400,"高中",25],["项目招投标",4500,"本科",18],["法务助理",4500,"本科",12],["标书制作专员",5818,"大专",11],["招投标助理",5000,"中专/中技",10],["招标文员",6000,"大专",4],["稽查员",6500,"大专",3],["业务员",4500,"大专",3],["【集团】法务",8000,"本科",3],["标书文员1名",4000,"大专",2],["司法鉴定部门负责人",9000,"本科",1]]},{"name":"咸阳","demand":91,"salary":6363,"jobCount":21,"jobs":[["法务专员",5750,"本科",24],["法务主管",7500,"本科",11],["招投标专员",4500,"本科",8],["法务专员/助理",8000,"本科",7],["法律事务员",5000,"本科",5],["招标代理",5000,"大专",5],["商务专员（招投标）",9500,"本科",4],["行政法务专员",6000,"本科",4],["投标部文员",4500,"大专",4],["投标主管",6333,"本科",3],["技术标书专员（石油化工）",7500,"本科",3],["法务经理",8667,"本科",3]]},{"name":"宝鸡","demand":73,"salary":5932,"jobCount":16,"jobs":[["法务专员",5500,"学历不限",12],["实习律师",3000,"本科",10],["律师助理外勤（双休＋提成）",4500,"大专",9],["标书资料员",5500,"大专",8],["律师助理外勤",4500,"大专",6],["法务专员（无专业限制＋双休＋提成）",6000,"学历不限",6],["授薪律师",6000,"本科",4],["律师助理双休（可接受非法学）",4500,"学历不限",4],["刑辩律师",11500,"本科",4],["执业律师",12500,"本科",2],["风险控制",10000,"硕士",2],["宝鸡市执业律师",12500,"本科",2]]},{"name":"安康","demand":46,"salary":12413,"jobCount":4,"jobs":[["法务经理",11500,"大专",26],["招标专员标书制作文员",4000,"大专",12],["招投标专员",4000,"大专",6],["督察员",100000,"大专",2]]},{"name":"铜川","demand":30,"salary":7133,"jobCount":6,"jobs":[["法律事务岗",7000,"硕士",14],["法务合规专员",7167,"本科",9],["风控合规专员",6000,"本科",3],["法务管理",7000,"硕士",2],["高级法务专员",6500,"本科",1],["法务执行经理",13000,"本科",1]]},{"name":"汉中","demand":13,"salary":5462,"jobCount":4,"jobs":[["招投标专员",4000,"大专",6],["维权专员",6000,"大专",4],["法务专员",7500,"本科",2],["高级法务经理",8000,"本科",1]]},{"name":"渭南","demand":10,"salary":7150,"jobCount":3,"jobs":[["法务岗",7500,"本科",8],["投标预算员",7500,"大专",1],["招标专员",4000,"本科",1]]},{"name":"延安","demand":1,"salary":6000,"jobCount":1,"jobs":[["法务专员",6000,"本科",1]]}]},"湖北":{"demand":8056,"salary":10002,"cityCount":14,"cities":[{"name":"武汉","demand":7197,"salary":10230,"jobCount":456,"jobs":[["招标投标员",10500,"本科",1100],["法务专员",10733,"本科",458],["急缺两人（今面试明上班+不外出）",8500,"学历不限",280],["缺两个徒弟，本姑娘亲自带+新人8100",9000,"学历不限",270],["法律咨询助理（负债方向）",7500,"大专",170],["欢迎年前过渡 面完出结果",7500,"学历不限",160],["招俩吃货小朋友 坐我旁边（合规）",9000,"学历不限",140],["执业律师",12710,"本科",136],["法务一名（不限经验）",15000,"学历不限",130],["招标专员（外勤岗）",9000,"本科",125],["招投标专员",6184,"大专",122],["实习生应届生皆可（提供实习证明）",7500,"学历不限",120]]},{"name":"宜昌","demand":396,"salary":8486,"jobCount":40,"jobs":[["风险管理/控制/稽查",10500,"大专",100],["法务专员助理",12000,"大专",50],["标书文员",6000,"大专",22],["法务专员",7722,"本科",18],["法律顾问",10765,"本科",17],["招标代理专员（若干）",4500,"大专",16],["投标专员",4433,"本科",15],["标书员",6000,"大专",14],["标书制作专员",5500,"本科",11],["法务负责人",9700,"本科",10],["招标代理专员",4700,"大专",10],["风控专员",12000,"大专",10]]},{"name":"襄阳","demand":186,"salary":8978,"jobCount":19,"jobs":[["招投标专员",5250,"本科",30],["法务专员",7028,"本科",18],["法务管理",13000,"本科",17],["涉外法务管理",14000,"本科",16],["商务标编制岗",10500,"本科",13],["内控合规专员",8208,"大专",12],["安全稽核员",6000,"大专",12],["投标专员",4182,"大专",11],["国际法务管理",14500,"本科",9],["法务经理（社保缴纳地：湖北襄阳）",13000,"本科",9],["法务专经理（社保缴纳地：襄阳）",9000,"本科",9],["法务专员（社保缴纳地：襄阳）",9000,"本科",9]]},{"name":"咸宁","demand":76,"salary":5566,"jobCount":10,"jobs":[["挂网招标专员",5500,"大专",27],["招投标专员",5000,"大专",18],["工程招投标",5000,"大专",12],["标书文员",6000,"大专",8],["商务投标专员",5000,"大专",4],["合规/内控专员",7500,"大专",2],["车间合规/稽查专员",7500,"大专",2],["合规/内审专员",7500,"本科",1],["内审专员",7500,"大专",1],["法务专员",11500,"本科",1]]},{"name":"孝感","demand":71,"salary":6824,"jobCount":8,"jobs":[["商务标书专员",6000,"大专",18],["法务专员",6813,"本科",16],["标书经理",6000,"本科",14],["招投标专员",4692,"大专",13],["法务助理",5000,"大专",3],["经营部经理",17500,"本科",3],["经营部部长",17500,"大专",2],["风险合规专员",10000,"本科",2]]},{"name":"十堰","demand":36,"salary":6569,"jobCount":6,"jobs":[["汽车项目招投标经理",8500,"大专",15],["招投标专员",5000,"大专",11],["标书文员",3900,"大专",5],["法务专员",7000,"本科",3],["法务",6500,"本科",1],["内控合规专员",7000,"大专",1]]},{"name":"荆州","demand":35,"salary":9329,"jobCount":6,"jobs":[["法务组长(A185543)",10071,"本科",14],["法务专员",8500,"本科",10],["法务专员(A152647)",7500,"本科",6],["法务主管(A185543)",13000,"本科",2],["法务组长",12500,"本科",2],["投标专员",4500,"大专",1]]},{"name":"黄石","demand":20,"salary":7675,"jobCount":5,"jobs":[["标书文员",3682,"大专",11],["合规稽查岗（互联网金融）",6000,"本科",3],["场外合规岗 （提供住宿）",5000,"本科",2],["法务部长",32500,"本科",2],["市拓招投标经理",10000,"大专",2]]},{"name":"荆门","demand":17,"salary":9118,"jobCount":7,"jobs":[["法务专员",7583,"本科",6],["法医助理",6000,"本科",4],["法医临床鉴定人",6000,"本科",2],["酒精检测",6000,"本科",2],["集团法务部经理",25000,"本科",1],["法务专员/主管",11500,"本科",1],["集团法务经理",25000,"本科",1]]},{"name":"黄冈","demand":13,"salary":6038,"jobCount":3,"jobs":[["法务专员",5500,"EMBA",7],["法务副总",7500,"大专",4],["招投标代理专员",5000,"大专",2]]},{"name":"随州","demand":4,"salary":7625,"jobCount":3,"jobs":[["财务风控部法务专员",4000,"本科",2],["执业律师",11500,"学历不限",1],["律师",11000,"本科",1]]},{"name":"鄂州","demand":2,"salary":5000,"jobCount":1,"jobs":[["招投标文员",5000,"本科",2]]},{"name":"恩施","demand":2,"salary":6500,"jobCount":1,"jobs":[["法务专员",6500,"本科",2]]},{"name":"仙桃市","demand":1,"salary":13000,"jobCount":1,"jobs":[["法务",13000,"本科",1]]}]},"辽宁":{"demand":6689,"salary":12338,"cityCount":14,"cities":[{"name":"沈阳","demand":4414,"salary":14296,"jobCount":468,"jobs":[["执业律师",21733,"本科",439],["律师助理",3847,"本科",232],["招投标专员",4563,"大专",199],["实习律师",2210,"本科",174],["风控专员+五险一金",10500,"大专",140],["专职律师",9668,"本科",131],["合作律师",35275,"本科",120],["授薪律师",23101,"本科",94],["法务专员",7032,"本科",93],["独立律师",13224,"本科",87],["实习律师/律师助理",2446,"本科",80],["投标专员",5100,"大专",75]]},{"name":"大连","demand":1422,"salary":9844,"jobCount":167,"jobs":[["做标书文员待遇9000元，四个月涨350元",11500,"本科",210],["长春谈案顾问",7500,"学历不限",195],["做标书文员待遇9500元，四个月涨350元",12000,"本科",162],["家庭财富风险管理师团队经理",10500,"大专",60],["长春授薪律师",10500,"本科",50],["合作律师",15000,"学历不限",45],["招标工程师",6000,"本科",36],["实习律师",2676,"本科",34],["法务专员",8196,"本科",28],["律师",10500,"本科",28],["诉讼律师",15000,"本科",24],["批量案件律师",6000,"本科",24]]},{"name":"葫芦岛","demand":153,"salary":6180,"jobCount":12,"jobs":[["执业律师",8500,"本科",60],["实习律师",1500,"本科",40],["招标采购岗",11500,"本科",14],["公司法务助理",3500,"本科",12],["经营员",5000,"大专",9],["高薪急聘企业法务专员",7500,"本科",6],["法务助理",3500,"本科",5],["法务主管",10250,"本科",2],["风控专员",4000,"大专",2],["风控专业经理",15000,"本科",1],["法务管理岗",11500,"本科",1],["法务管理岗（葫芦岛）",10000,"本科",1]]},{"name":"营口","demand":138,"salary":7257,"jobCount":17,"jobs":[["法务专员",5676,"本科",34],["鉴定人助理（法医临床）",4500,"本科",20],["投标专员",6417,"本科",18],["声像资料司法鉴定人",7500,"本科",15],["法务经理",11000,"大专",14],["法务助理",8000,"本科",6],["法律顾问",5000,"大专",5],["企业法务顾问",9000,"本科",4],["标书制作专员",5500,"大专",4],["审计与风控负责人",11000,"本科",4],["法务总监",25000,"本科",3],["涉外律师（英文好）",13167,"本科",3]]},{"name":"本溪","demand":138,"salary":4091,"jobCount":8,"jobs":[["投标专员实习生",2500,"大专",60],["合规专员",3974,"大专",57],["进出口合规专员",6000,"本科",8],["技术标投标总工",15000,"本科",6],["法务专员",5750,"本科",4],["法务专员（法务实习生）",4500,"大专",1],["标书制作专员",7500,"学历不限",1],["投标总工",15000,"本科",1]]},{"name":"鞍山","demand":133,"salary":6113,"jobCount":12,"jobs":[["投标专员",4476,"本科",63],["招投标专员",3500,"本科",17],["工程业务（建筑类）",14045,"大专",11],["集团法律顾问",6500,"大专",10],["工程业务市场（建筑类）",7500,"大专",9],["法务专员",5167,"本科",6],["工程类业务人员",12900,"大专",5],["投标资料员",6000,"大专",4],["法医专业",7500,"本科",3],["急招！！！法务专员/助理",5500,"学历不限",2],["经营主管+经营专员（工作地合肥）",4500,"大专",2],["法务经理",22500,"本科",1]]},{"name":"盘锦","demand":116,"salary":8237,"jobCount":11,"jobs":[["法务事务专员（辽宁省盘锦市）",10500,"本科",32],["工程招投标专员",4500,"大专",21],["法律事务专员（工作地点：新疆地区）（最好应届毕业生）",8000,"本科",16],["法律合规部副主任",10500,"本科",15],["招标、采购代理专员",12000,"本科",8],["招投标专员",4000,"本科",7],["招标代理专员",8750,"本科",6],["预算投标专员",3500,"大专",4],["法律事务专员（应届毕业生）",6000,"本科",4],["法律合规部副主任（工作地点：辽宁盘锦）",10500,"本科",2],["执业律师",4000,"本科",1]]},{"name":"丹东","demand":58,"salary":5241,"jobCount":15,"jobs":[["风险与运营管理员",4500,"本科",9],["公司法务",6750,"大专",8],["投标专员",7500,"大专",6],["标书制作专员",7500,"大专",5],["招电力工程投标专员资料员",5000,"大专",5],["法务文员",4000,"大专",4],["招标文员",500,"大专",3],["招投标专员",4167,"本科",3],["招投标资料员",4500,"中专/中技",3],["法务助理",6500,"大专",3],["投标资料员",4500,"中专/中技",3],["法务专员",3500,"本科",2]]},{"name":"锦州","demand":30,"salary":7417,"jobCount":4,"jobs":[["法务专员",9000,"本科",17],["风控管理",7500,"本科",5],["招标文员",4500,"本科",4],["投标部标书专员",3500,"大专",4]]},{"name":"辽阳","demand":27,"salary":7593,"jobCount":10,"jobs":[["法务主管/专业经理(工作地：辽阳)",10000,"本科",11],["法务人员",5000,"大专",6],["贸易文员",5000,"本科",2],["招标管理专员",5000,"本科",2],["内控专员",7000,"大专",1],["天津象屿铝业-法务主管",11500,"本科",1],["天津象屿铝业-内控专员",7000,"大专",1],["公司法务",4000,"大专",1],["投标专员",5500,"大专",1],["法务主管/专业经理",10000,"本科",1]]},{"name":"朝阳","demand":25,"salary":10140,"jobCount":9,"jobs":[["法务经理",12500,"本科",8],["企业法务专员",7000,"本科",7],["招投标商务专员",3500,"大专",3],["集团法务经理",10750,"本科",2],["法律合规部法务专员",10500,"本科",1],["商务投标报价专员",9000,"本科",1],["法务副总经理",16500,"本科",1],["门窗幕墙预结算专员",9000,"本科",1],["集团法务总监",27500,"本科",1]]},{"name":"抚顺","demand":16,"salary":5125,"jobCount":5,"jobs":[["标书制作专员",3500,"本科",7],["投标部文员",3500,"本科",3],["法律事务管理师",9500,"本科",3],["法务干事",7000,"本科",2],["招投标专员",4500,"大专",1]]},{"name":"阜新","demand":11,"salary":4409,"jobCount":3,"jobs":[["招投标专员",4000,"本科",7],["法律顾问",4000,"本科",3],["公司法务",8500,"本科",1]]},{"name":"铁岭","demand":8,"salary":4500,"jobCount":3,"jobs":[["标书工程师",4000,"本科",4],["标书制作专员",4500,"大专",3],["商务专员",6500,"大专",1]]}]},"天津":{"demand":6364,"salary":9824,"cityCount":1,"cities":[{"name":"天津","demand":6364,"salary":9824,"jobCount":570,"jobs":[["提成律师",15947,"本科",513],["独立提成律师",15143,"本科",441],["提成律师[天津-河东区]",9000,"学历不限",320],["实习律师",3566,"本科",290],["律师",8071,"本科",280],["授薪律师",7048,"本科",196],["调解员",4009,"本科",173],["执业律师",11627,"本科",166],["律所提成律师",13000,"本科",160],["法务专员",7258,"本科",122],["律师助理",4539,"本科",108],["招投标专员",5609,"大专",102]]}]},"湖南":{"demand":5786,"salary":10207,"cityCount":13,"cities":[{"name":"长沙","demand":4821,"salary":10638,"jobCount":405,"jobs":[["贷后风控专员",11969,"大专",1459],["律师事务所实习人员",4571,"本科",420],["独立律师",16282,"本科",379],["授薪律师",9284,"本科",116],["招投标专员",5976,"大专",115],["兼职律师",22000,"大专",99],["执业律师",38847,"本科",98],["律师助理",4536,"本科",83],["标书制作专员",7000,"大专",70],["法务专员",7009,"本科",58],["实习律师",3860,"本科",57],["投标专员",5577,"大专",52]]},{"name":"湘潭","demand":291,"salary":8194,"jobCount":13,"jobs":[["专职律师和律师助理",7500,"本科",105],["律师助理",5000,"本科",95],["法务经理",11000,"本科",18],["高级法务总监",17500,"本科",17],["法务专员",6813,"本科",16],["法务主管",8389,"本科",9],["国际投标负责人",23750,"本科",8],["国际投标主管",14000,"本科",8],["专职执业律师",10500,"硕士",6],["标书制作专员",6000,"本科",4],["企业风险控制",13500,"本科",3],["公司法务助理",7500,"本科",1]]},{"name":"岳阳","demand":192,"salary":8935,"jobCount":12,"jobs":[["DRM风险管理师",9000,"大专",160],["法务部部长",11500,"本科",7],["标书专员",6000,"大专",6],["稽核经理",13500,"本科",4],["稽核员（北海劲仔）",5000,"大专",4],["投标专员",6000,"本科",3],["合规稽核（包吃住）",9000,"本科",2],["招投标专员",6500,"大专",2],["法务专员/助理",9500,"本科",1],["高级稽核主管（包吃住）",10000,"本科",1],["法律事务（诉论）岗",6500,"本科",1],["高级稽核专员（包吃住）",10000,"本科",1]]},{"name":"永州","demand":170,"salary":8388,"jobCount":4,"jobs":[["金融诉前调解",9000,"高中",80],["诉前调解员",8000,"高中",70],["法律顾问",7000,"学历不限",14],["公司法务",8000,"本科",6]]},{"name":"株洲","demand":95,"salary":8164,"jobCount":15,"jobs":[["投标文员（劳务）",5000,"本科",24],["IWAY社会责任审核",15000,"大专",22],["法务专员",7938,"本科",8],["投标专员/助理",4500,"大专",7],["公司法务",6500,"本科",6],["商务内勤",6500,"本科",6],["标书制作专员",6000,"本科",6],["工程商务经理",10000,"本科",4],["商务投标专员",7000,"大专",4],["投标主管",6500,"大专",3],["法务助理",125,"本科",1],["IWAY专员",8000,"大专",1]]},{"name":"怀化","demand":73,"salary":6349,"jobCount":3,"jobs":[["标书专员",6321,"本科",70],["标书制作专员",5500,"大专",2],["投标经理",10000,"大专",1]]},{"name":"娄底","demand":52,"salary":6433,"jobCount":9,"jobs":[["实习律师/律师助理",4500,"本科",20],["编制标书及商务投标专员",4000,"学历不限",12],["法务主管",14000,"本科",7],["法诉调解专员",9000,"大专",5],["标书文员",4500,"大专",3],["律师助理",5500,"本科",2],["经营业务员",12000,"大专",1],["标书制作员（涟源）",5000,"大专",1],["工程业务员",12000,"大专",1]]},{"name":"衡阳","demand":39,"salary":8615,"jobCount":8,"jobs":[["债务协商法务专员",9500,"学历不限",8],["法务主管",7500,"本科",6],["债务法律顾问",9000,"学历不限",6],["法务审计岗",8000,"本科",6],["法律顾问",9000,"学历不限",6],["债务处置专职律师",10000,"学历不限",5],["投标专员",5000,"大专",1],["合规稽查专员",4000,"大专",1]]},{"name":"益阳","demand":21,"salary":5643,"jobCount":6,"jobs":[["内勤稽核专员",5000,"大专",13],["法务经理",6500,"本科",3],["风险控制",4500,"大专",2],["标书专员",7000,"本科",1],["劳资管理主任",12000,"本科",1],["周末双休-商务招投标专员",6000,"大专",1]]},{"name":"邵阳","demand":21,"salary":5976,"jobCount":1,"jobs":[["法务专员",5976,"本科",21]]},{"name":"常德","demand":5,"salary":12600,"jobCount":3,"jobs":[["投标专员",6000,"本科",2],["公司法务",18000,"本科",2],["信用管控经理",15000,"本科",1]]},{"name":"湘西","demand":4,"salary":4750,"jobCount":2,"jobs":[["法务专员",4000,"本科",3],["内控合规专员",7000,"大专",1]]},{"name":"郴州","demand":2,"salary":6500,"jobCount":1,"jobs":[["法务专员",6500,"大专",2]]}]},"安徽":{"demand":5440,"salary":8059,"cityCount":14,"cities":[{"name":"合肥","demand":3686,"salary":8480,"jobCount":446,"jobs":[["法院项目沟通专员",8500,"大专",400],["月入9000法院项目调解员",8000,"大专",200],["招投标专员",6969,"大专",143],["长丰县人民法院-司法辅助岗",3500,"大专",128],["律师助理/高提点/五险一金/近地铁口",15000,"学历不限",120],["阜阳市调解员",4500,"大专",115],["芜湖市调解员",4500,"大专",115],["法律咨询顾问",6000,"学历不限",70],["谈案律师助理",8357,"大专",70],["法律咨询销售顾问",8182,"大专",66],["律师助理(客户经理)",9500,"大专",65],["法务顾问",6097,"学历不限",62]]},{"name":"蚌埠","demand":665,"salary":5756,"jobCount":11,"jobs":[["风控专员",5448,"大专",536],["法务专员",6000,"大专",48],["高新区8千风控专员五险",7500,"中专/中技",27],["法务营销顾问",6500,"大专",20],["风控经理",10000,"本科",10],["法务",6000,"本科",7],["法律销售专员",4500,"大专",6],["法务主管/法务经理",16000,"本科",5],["投标专员",6500,"大专",4],["风控主管",6500,"本科",1],["监理标书制作专员",5500,"大专",1]]},{"name":"芜湖","demand":297,"salary":9889,"jobCount":41,"jobs":[["法务专员",9744,"本科",45],["工程招投标专员",8089,"大专",28],["招投标专员",4740,"大专",25],["销售法律顾问",12500,"学历不限",25],["法务经理",17783,"本科",23],["技术标专员-施工组织设计",15000,"大专",20],["实习律师",3500,"本科",18],["招标代理员",8654,"本科",13],["风控专员",5500,"本科",9],["高级法务专员",12500,"本科",6],["总经理法务助理",11500,"本科",6],["专职律师、律师助理",7500,"本科",6]]},{"name":"马鞍山","demand":178,"salary":5728,"jobCount":12,"jobs":[["招投标专员",5422,"大专",90],["招投标代理",5500,"大专",40],["法务主管/法务专员",11500,"本科",13],["技术（审计）合规部专员",4000,"大专",12],["工程招投标专员",3500,"大专",8],["公司法务",4000,"本科",5],["律师助理",6000,"本科",2],["授薪律师",6000,"本科",2],["内控主管",7500,"大专",2],["投标专员",6000,"大专",2],["商务投标专员",5000,"大专",1],["内控副经理",10000,"大专",1]]},{"name":"阜阳","demand":171,"salary":8129,"jobCount":33,"jobs":[["法务党群岗",5000,"本科",30],["招标代理",7500,"大专",29],["风险审计部专业经理",13500,"本科",12],["技术标负责人",9000,"本科",12],["投标经理",6500,"大专",9],["合规审计专业经理（施工建设）",15000,"本科",8],["法务主管（法学专业）",6500,"本科",6],["投标负责人",10000,"本科",6],["编制标书及商务投标专员",6200,"大专",5],["充电桩公司法务主管（法学专业）",5500,"本科",5],["法务主管",5500,"本科",5],["招投标专员",6250,"大专",4]]},{"name":"安庆","demand":94,"salary":7027,"jobCount":6,"jobs":[["招标代理专员",6992,"大专",61],["综合部文员（投标方向）",4000,"大专",12],["标书员",3500,"学历不限",6],["招标代理专员（国企）",9500,"本科",6],["招标技术专员",10500,"本科",6],["法务主管",15000,"本科",3]]},{"name":"铜陵","demand":88,"salary":7068,"jobCount":7,"jobs":[["投标专员",6000,"大专",50],["法务专员",9778,"学历不限",18],["法务专合规专员",7000,"本科",6],["违规追责岗",10000,"本科",5],["标书文员",4500,"大专",4],["法务岗",8000,"本科",3],["招投标专员",6000,"大专",2]]},{"name":"滁州","demand":79,"salary":8734,"jobCount":15,"jobs":[["投标技术员",8500,"大专",34],["工程投标专员",6000,"大专",10],["商务投标专员",5500,"大专",6],["投标专员/主管（五险一金+双休）",5000,"大专",6],["投标专员",6000,"大专",5],["法务主管/经理",8000,"本科",4],["技术标主管-经理",11000,"本科",2],["产品合规经理",24000,"本科",2],["法务经理/主管",10000,"本科",2],["技术标书主管-经理",12000,"本科",2],["食品产品合规经理",24000,"本科",2],["法务工程师",15000,"本科",1]]},{"name":"亳州","demand":71,"salary":6796,"jobCount":17,"jobs":[["工程招投标专员",6000,"大专",14],["工程招投标主管及成本经理",6000,"大专",10],["合规稽查专员",5900,"大专",10],["道路交通事故痕迹鉴定司法鉴定人/助理",12000,"本科",10],["风控经理",6500,"本科",4],["法务主管/专员",6500,"本科",4],["司法鉴定人",4500,"学历不限",4],["法务专员",6167,"大专",3],["集团法务专员",9000,"本科",2],["药品招标专员",6000,"大专",2],["诚招应届生从事公司内部法务专员",4750,"本科",2],["法医物证DNA鉴定",6000,"大专",1]]},{"name":"六安","demand":37,"salary":10216,"jobCount":8,"jobs":[["法务",11088,"本科",17],["法务主管",10143,"本科",7],["工程招投标",5500,"本科",3],["法务BP",16500,"本科",3],["公司法务",8000,"本科",3],["工程招投标专员",6500,"大专",2],["法务专员+五险一金+补助 7千~1万",8500,"本科",1],["投招标商务专员",7000,"大专",1]]},{"name":"淮北","demand":32,"salary":9547,"jobCount":6,"jobs":[["法务专员（社招）(A05386)",11500,"学历不限",10],["法务专员(A77608)",11500,"本科",8],["法律事务专员/会计/出纳",5000,"大专",4],["集团法务经理/主管",11500,"本科",4],["招投标专员（五险一金）",5500,"大专",4],["投标专员",5250,"本科",2]]},{"name":"宣城","demand":31,"salary":6629,"jobCount":5,"jobs":[["法务",6500,"本科",12],["高级法务专员",7000,"本科",11],["招标员",6500,"大专",4],["商务招投标专员",6500,"本科",3],["投标专员（ 工作地：安徽宁国）",5000,"大专",1]]},{"name":"淮南","demand":6,"salary":5333,"jobCount":2,"jobs":[["投标专员",5500,"本科",4],["招投标经理",5000,"本科",2]]},{"name":"宿州","demand":5,"salary":6200,"jobCount":4,"jobs":[["法务/法务主管",7500,"本科",2],["公司法务助理",4500,"本科",1],["工程投标专员",5000,"大专",1],["证券法务专员",6500,"本科",1]]}]},"吉林":{"demand":5267,"salary":9963,"cityCount":9,"cities":[{"name":"长春","demand":4585,"salary":10438,"jobCount":248,"jobs":[["投标管理岗-经济标岗",11000,"本科",1998],["提成律师",15106,"本科",426],["总所提酬律师",9000,"学历不限",155],["律师助理",3793,"本科",87],["专职律师",6461,"本科",77],["法务专员",8530,"学历不限",76],["实习律师/律师助理",2737,"本科",76],["实习律师",3160,"本科",75],["执业律师（若干名）",10500,"本科",70],["授薪律师",6921,"学历不限",57],["合伙人律师",24180,"本科",50],["评标专家",6500,"本科",50]]},{"name":"吉林市","demand":536,"salary":6635,"jobCount":36,"jobs":[["投标项目经理",6000,"大专",70],["实验员（食品安全检测方向）",6000,"本科",40],["投标项目经理（船营）",6000,"大专",40],["司法援助员 （青少年方向）",5500,"本科",40],["标书制作专员（江南）",5500,"本科",30],["司法鉴定人助理（法医临床和法医病理方向）",6000,"本科",26],["文检、痕迹司法鉴定助理",6000,"学历不限",24],["项目招投标专员",5000,"本科",24],["招投标 标书专员",3717,"本科",23],["标书专员",3050,"本科",20],["法医毒物鉴定人助理(质谱分析方向)",9000,"本科",20],["商务内勤标书专员",6500,"大专",19]]},{"name":"通化","demand":103,"salary":7408,"jobCount":7,"jobs":[["医药市场监管",8000,"大专",36],["法务监察经理",8000,"大专",32],["法务监察人员",5500,"大专",31],["法务律师",8000,"本科",1],["执业律师",8000,"学历不限",1],["药品招标/采购（原辅料、包材）",10000,"本科",1],["法务经理",22500,"本科",1]]},{"name":"松原","demand":31,"salary":6661,"jobCount":3,"jobs":[["法务专员",6808,"本科",26],["法务内勤专员",6500,"本科",4],["标书制作专员",3500,"本科",1]]},{"name":"延边","demand":6,"salary":7333,"jobCount":2,"jobs":[["法务专员",7000,"本科",5],["专职律师",9000,"本科",1]]},{"name":"白城","demand":2,"salary":10750,"jobCount":2,"jobs":[["投标经理",15000,"本科",1],["法务（集团公司）",6500,"本科",1]]},{"name":"白山","demand":2,"salary":7500,"jobCount":1,"jobs":[["法务顾问",7500,"本科",2]]},{"name":"四平","demand":1,"salary":5000,"jobCount":1,"jobs":[["法务专员",5000,"本科",1]]},{"name":"辽源","demand":1,"salary":8500,"jobCount":1,"jobs":[["法务主管",8500,"本科",1]]}]},"山西":{"demand":3648,"salary":6879,"cityCount":11,"cities":[{"name":"太原","demand":3180,"salary":6621,"jobCount":264,"jobs":[["标书专员",5555,"本科",282],["兼职标书专员",5500,"本科",180],["执业律师及律师团队",7500,"本科",160],["执业律师+双休+法定节假日休",7500,"大专",160],["执业律师",6419,"本科",148],["招投标专员",5123,"大专",126],["提成律师",14071,"本科",126],["标书制作",4951,"大专",122],["专职律师",7581,"本科",117],["投标专员",5250,"大专",90],["实习律师",3124,"本科",82],["执业律师+双休+法定节假日修",7000,"本科",70]]},{"name":"吕梁","demand":102,"salary":17015,"jobCount":12,"jobs":[["视频监察岗(A236913)",6500,"本科",24],["法务部长",60000,"本科",14],["经营督办岗",5500,"本科",12],["招标策划岗",9091,"本科",11],["内部控制岗",8000,"本科",7],["招标管理岗",5000,"本科",7],["房地产法务经理",10000,"大专",6],["法务专员",5000,"本科",5],["制度管理",5500,"本科",5],["法务部部长",70000,"本科",5],["标书制作员",3000,"大专",5],["招标项目经理",5000,"大专",1]]},{"name":"长治","demand":101,"salary":8317,"jobCount":17,"jobs":[["法务主管",9455,"本科",22],["公司法务",6000,"本科",12],["司法调解",5500,"大专",10],["标书文员",4000,"大专",8],["标书业务员",5000,"学历不限",8],["招标代理专员",4000,"本科",7],["采购经理",10000,"本科",6],["风控经理",21250,"本科",4],["投标专员",8000,"本科",4],["风控专员",4500,"本科",4],["集团法务主管+早九晚五+包住餐补",10500,"本科",4],["集团法务主管",10500,"本科",3]]},{"name":"临汾","demand":55,"salary":5764,"jobCount":10,"jobs":[["法务副部长",8000,"本科",10],["【五险一金】法务专员",5000,"本科",10],["招标中心招标管理",5500,"本科",8],["集团法务专员",6000,"本科",7],["招标管理/项目管理",5500,"本科",7],["法务专员",4000,"本科",6],["投标管理员",5000,"本科",3],["办公室投标文员",3500,"本科",2],["【五险一金包食宿】风险合规部副部长",11500,"本科",1],["招标内勤文员",5000,"大专",1]]},{"name":"大同","demand":50,"salary":5690,"jobCount":5,"jobs":[["人民调解员/法务专员助理",6000,"大专",40],["投标文员",3500,"大专",5],["法务专员",6500,"本科",3],["招标部主管",4500,"本科",1],["司法调解",3000,"大专",1]]},{"name":"晋中","demand":48,"salary":5563,"jobCount":11,"jobs":[["招投标专员",6000,"本科",20],["投标专员",4000,"大专",9],["法务专员",5000,"本科",5],["招投标信息员",5167,"本科",3],["内控合规专员",10833,"大专",3],["药品招标专员",3500,"大专",2],["招投标内勤专员",5000,"大专",2],["标书制作专员",4000,"大专",1],["物业投标专员",5000,"本科",1],["标书制作员",7000,"大专",1],["招标专员/招标主管",5000,"大专",1]]},{"name":"运城","demand":44,"salary":5352,"jobCount":9,"jobs":[["法务专员",5773,"硕士",22],["社会风险稳评报告编制员",6000,"本科",8],["公司法务",4750,"本科",4],["上市公司-投标专员",2500,"本科",4],["商务标书专员",3500,"大专",2],["风控专员（五险+绩效+福利+补助）",5000,"大专",1],["内控合规专员",7000,"大专",1],["招投标专员（双休）",6000,"大专",1],["法务外协专员",6500,"本科",1]]},{"name":"阳泉","demand":28,"salary":5179,"jobCount":5,"jobs":[["商务专员",4500,"大专",12],["标书专员",4375,"本科",8],["法务助理",5000,"本科",5],["高级法务主管",12000,"本科",2],["物业招投标经理",7000,"本科",1]]},{"name":"晋城","demand":19,"salary":5526,"jobCount":4,"jobs":[["高级法务专员",7000,"本科",8],["项目招投标专员",4500,"大专",8],["工程招投标专员",4000,"大专",2],["法务专员",5000,"本科",1]]},{"name":"忻州","demand":17,"salary":5382,"jobCount":5,"jobs":[["公司法务",7500,"本科",7],["标书专员",4000,"大专",4],["招标专员",4000,"大专",4],["企业法务助理",3500,"本科",1],["投标员",3500,"大专",1]]},{"name":"朔州","demand":4,"salary":4625,"jobCount":3,"jobs":[["司法调解",3500,"大专",2],["招投标专员",6000,"本科",1],["律师",5500,"学历不限",1]]}]},"福建":{"demand":3120,"salary":9921,"cityCount":9,"cities":[{"name":"福州","demand":1268,"salary":11737,"jobCount":227,"jobs":[["执业律师",27966,"本科",88],["授薪律师",14129,"本科",66],["法务专员",6517,"本科",58],["招投标专员",5192,"大专",52],["独立律师",15317,"本科",52],["授薪律师（负责非诉方向)",10500,"本科",39],["实习律师",5211,"本科",37],["法务主管",11162,"本科",37],["投标专员",5671,"大专",35],["专职独立律师",9429,"本科",35],["律师助理",5660,"本科",29],["法务经理（集团总部）",23786,"本科",28]]},{"name":"厦门","demand":880,"salary":8598,"jobCount":177,"jobs":[["律师助理",6497,"本科",149],["实习律师",3612,"本科",36],["律所短期实习生",75,"本科",25],["法务专员",9592,"本科",23],["授薪律师/专职律师",8000,"本科",20],["律师实习生",70,"本科",20],["咨询顾问",15000,"本科",20],["法务岗/法务经理",15000,"本科",19],["法律销售（无相关经验可培养+高提成+团队赋能）",9000,"大专",16],["授薪律师",7313,"本科",16],["法务",10875,"大专",16],["法律顾问/案源开发专员招聘（无经验可培养+高提成+团队赋能）",9250,"大专",16]]},{"name":"泉州","demand":804,"salary":8696,"jobCount":78,"jobs":[["投标专员",5682,"大专",85],["招投标专员",6500,"中专/中技",75],["项目专员（业务方向）",7500,"大专",60],["工程招标代理人员",8643,"学历不限",42],["律师助理（厦门）",8000,"本科",40],["律师助理（福州）",8000,"本科",40],["事务所律师（福州）",12500,"本科",40],["事务所律师（泉州）",12500,"本科",40],["事务所律师（厦门）",12500,"本科",40],["招投标专员（文案专员）",7500,"大专",38],["律师助理（泉州）",8000,"本科",30],["法医临床鉴定人",15000,"学历不限",18]]},{"name":"漳州","demand":54,"salary":9837,"jobCount":11,"jobs":[["法务专员",10130,"本科",23],["法务岗",12944,"本科",9],["法务副经理",13500,"本科",5],["招标专员",10500,"本科",4],["标书制作与报价管理专员",6167,"大专",3],["商务招投标专员（应届）",4000,"大专",2],["高级法务专员",8500,"本科",2],["法规实习生",100,"本科",2],["工程招投标人员",7500,"本科",2],["招投标主管",5500,"大专",1],["商务专员/经理",8000,"大专",1]]},{"name":"宁德","demand":51,"salary":9324,"jobCount":10,"jobs":[["法务专员",10667,"本科",9],["授薪律师",10000,"本科",8],["兼职法务",7500,"本科",7],["合规内控主管",15000,"本科",6],["投标文员",6000,"中专/中技",6],["专职律师",10000,"本科",4],["项目投标专员",6000,"大专",3],["执业律师",12000,"本科",3],["实习律师",5000,"本科",3],["双休朝九晚五-法务专员",6000,"本科",2]]},{"name":"龙岩","demand":24,"salary":6854,"jobCount":6,"jobs":[["标书制作员 (MJ000131)",7000,"本科",10],["法务专员",6111,"本科",9],["招标投标项目经理",7500,"大专",2],["经营管理人员",9000,"本科",1],["业务拓展岗",10000,"本科",1],["投标业务岗",5500,"本科",1]]},{"name":"莆田","demand":14,"salary":7714,"jobCount":4,"jobs":[["法务主管/专员",7250,"本科",10],["招投标专员",6000,"大专",2],["法务专员",7000,"本科",1],["法务经理",16500,"本科",1]]},{"name":"南平","demand":13,"salary":10692,"jobCount":5,"jobs":[["维权顾问/律师助理",9000,"高中",5],["授薪执业律师（1名）、提成律师（2名）、实习律师（1名）",7500,"本科",4],["高级法务经理",22500,"本科",2],["法务主管",15000,"本科",1],["标书制作员",4000,"学历不限",1]]},{"name":"三明","demand":12,"salary":7875,"jobCount":5,"jobs":[["法务行政专员",5000,"本科",6],["合规法务专员",11000,"硕士",3],["行政法务专员",5500,"大专",1],["法务经理",15000,"本科",1],["法务合规专员",11000,"本科",1]]}]},"江西":{"demand":2441,"salary":7795,"cityCount":11,"cities":[{"name":"南昌","demand":1625,"salary":7133,"jobCount":165,"jobs":[["诉讼代理",6034,"本科",883],["招投标专员",5441,"大专",51],["招标专员文员",7000,"大专",50],["实习律师",3667,"本科",24],["授薪律师",9750,"本科",24],["（急聘）信用控制专员",9500,"本科",20],["法医鉴定人",9000,"学历不限",20],["开庭律师/合作律师",16000,"大专",20],["法务专员/法务主管",6500,"本科",19],["金融质检主管",5500,"大专",19],["标书制作专员",4735,"大专",17],["双休内控专员",4500,"大专",17]]},{"name":"九江","demand":212,"salary":8814,"jobCount":19,"jobs":[["法务岗",11000,"本科",52],["【2025校招】法务专员(A12938)",10500,"本科",38],["法务专员(A124245)",10500,"本科",28],["商务招投标专员",5000,"大专",18],["招标专员文员",4500,"大专",17],["投标专员",5077,"学历不限",13],["标书制作专员",4500,"学历不限",8],["法务经理/法务主管",10000,"本科",7],["诚聘授薪律师+周末双休",15000,"本科",6],["法务部员工",5000,"本科",4],["标书专员",5000,"中专/中技",4],["标书制作员",5000,"大专",4]]},{"name":"上饶","demand":155,"salary":7744,"jobCount":24,"jobs":[["法务专员",8544,"本科",34],["法务合规助理（实习）",175,"本科",19],["招投标专员",5800,"本科",15],["法务实习生",4000,"本科",12],["法务（上市公司）",9000,"本科",9],["招投标主管，标书文员",7500,"本科",9],["风控法务经理",11500,"本科",8],["集团法务经理",15000,"本科",8],["法务助理",4500,"大专",7],["集团法务主管/专员",8500,"本科",5],["法务总监",22000,"大专",4],["专职律师",7500,"本科",4]]},{"name":"宜春","demand":129,"salary":15601,"jobCount":24,"jobs":[["律所合伙人（主任）",25308,"本科",39],["法务副总监",12824,"本科",37],["标书制作专员",5000,"本科",6],["律所合伙人",18000,"本科",5],["法务经理",13125,"本科",4],["公司法务",10000,"本科",4],["法务专员",8000,"本科",4],["制标员",5000,"大专",4],["执业律师",12125,"本科",4],["合伙人律师",17500,"本科",3],["内勤人员",4000,"大专",2],["投标专员",5000,"大专",2]]},{"name":"吉安","demand":105,"salary":7729,"jobCount":15,"jobs":[["法务专员",6300,"本科",45],["法务",12133,"本科",15],["法务主管",9000,"本科",8],["招投标专员",2500,"大专",5],["建筑行业招投标业务员",8500,"高中",5],["投标业务员",7500,"高中",5],["工程招投标专员",9500,"本科",4],["高级法务专员",12500,"本科",3],["法务岗（吉安县两山）",7000,"本科",3],["法务实习生",4500,"本科",3],["A法务",12000,"本科",3],["投标专员",6000,"大专",2]]},{"name":"抚州","demand":78,"salary":7269,"jobCount":9,"jobs":[["标书专员",7824,"大专",34],["标书文员",7500,"大专",18],["综合法务专员",6000,"本科",10],["政府采购招标代理专员",5500,"大专",5],["标书制作工程师",9500,"大专",5],["商务招投标专员（五险一金 双休 ）",5000,"本科",2],["标书员资料员",5000,"大专",2],["预算员",5000,"大专",1],["投标文员",6000,"本科",1]]},{"name":"赣州","demand":78,"salary":7174,"jobCount":15,"jobs":[["招投标专员",5227,"大专",44],["法务专员",9182,"本科",11],["集团法务总监（五险一金/法定节假日）",12000,"本科",7],["法务总监",10000,"大专",3],["保函风控审核岗",13500,"本科",3],["建筑招投标",8000,"大专",1],["法务主管/经理",9500,"本科",1],["法务电销专员",4500,"学历不限",1],["文员助理",110,"大专",1],["法务专员/助理",15000,"本科",1],["实习生（法务）",4000,"本科",1],["法务合规员",10000,"本科",1]]},{"name":"景德镇","demand":23,"salary":9457,"jobCount":4,"jobs":[["风控法务管理",12500,"本科",9],["招投标主管（子公司-昌河航设）",7500,"本科",7],["法务专员",7833,"本科",6],["招投标专员",5500,"大专",1]]},{"name":"萍乡","demand":22,"salary":5000,"jobCount":6,"jobs":[["招标代理专员",4500,"本科",8],["标书制作员/招投标专员",5000,"大专",7],["标书制作专员",5500,"大专",3],["招标代理",6000,"本科",2],["标书员",3500,"大专",1],["招投标商务主管",7000,"本科",1]]},{"name":"新余","demand":10,"salary":6100,"jobCount":3,"jobs":[["招投标专员",4000,"大专",4],["企业法务专员",7500,"本科",3],["法务专员（大小周休）",7500,"本科",3]]},{"name":"鹰潭","demand":4,"salary":7000,"jobCount":2,"jobs":[["招投标专员",6500,"大专",2],["法务（五险双休大平台有发展）",7500,"大专",2]]}]},"重庆":{"demand":2435,"salary":8413,"cityCount":1,"cities":[{"name":"重庆","demand":2435,"salary":8413,"jobCount":311,"jobs":[["谈案专家（交通事故/工伤）",10000,"学历不限",150],["实习律师",3337,"本科",114],["专职律师",8091,"本科",110],["执业律师",8961,"本科",89],["法律销售顾问",11000,"学历不限",86],["法律咨询专员",6560,"大专",84],["风控催收",10000,"高中",80],["律师助理",6054,"硕士",74],["授薪律师",10812,"本科",69],["招投标资料员",8341,"大专",69],["律师",13352,"本科",64],["风控合规专员",110,"大专",50]]}]},"内蒙古":{"demand":2102,"salary":11053,"cityCount":11,"cities":[{"name":"呼和浩特","demand":1297,"salary":13472,"jobCount":131,"jobs":[["投标专员",5766,"本科",126],["执业律师",12589,"本科",112],["合规及风险管理岗（呼伦贝尔）",5000,"本科",110],["实习律师",2906,"本科",69],["合规及风险管理岗（巴彦淖尔）",5000,"本科",60],["专职律师",134895,"本科",57],["合规及风险管理岗（包头）",5000,"本科",50],["诚聘执业律师",11500,"本科",40],["标书制作员/标书专员",5706,"大专",34],["提成律师",8193,"本科",31],["司法鉴定助理",7500,"大专",30],["招投标专员",5100,"大专",30]]},{"name":"包头","demand":359,"salary":6259,"jobCount":42,"jobs":[["投标专员",4500,"大专",57],["标书专员",5420,"学历不限",44],["标书制作专员",4500,"大专",30],["投标专员（钢结构）",4500,"本科",22],["投标助理",4500,"本科",21],["法务专员",5600,"本科",20],["招标代理专员",4000,"大专",18],["投标经理",3500,"大专",16],["投标资料员",4000,"本科",14],["招投标专员",5769,"大专",13],["法务",7773,"本科",11],["合规岗",8000,"本科",10]]},{"name":"赤峰","demand":147,"salary":6051,"jobCount":28,"jobs":[["招投标专员",4000,"本科",15],["招标专员文员",3500,"本科",13],["投标专员文职策划",4500,"学历不限",13],["集团公司专职法务",11500,"本科",12],["勤思医疗内勤",4500,"本科",11],["市场监察/稽查经理",10000,"本科",10],["招标专员",3500,"本科",10],["前台",3500,"大专",9],["商务投标专员",4000,"大专",7],["合规主管",4500,"本科",6],["招标代理",4500,"大专",5],["法务经理",10000,"大专",5]]},{"name":"鄂尔多斯","demand":112,"salary":9143,"jobCount":25,"jobs":[["招投标专员",6600,"本科",15],["法务经理",24000,"本科",10],["法务专员",6250,"本科",10],["招投标资料员",5000,"大专",10],["法务主管",7000,"学历不限",9],["工程招投标专员",5250,"大专",8],["招投标经理",17500,"本科",6],["公司法务助理",4750,"本科",6],["法律顾问",6500,"本科",5],["标书专员",4300,"大专",5],["合规管理咨询顾问",7500,"本科",3],["法务部部长",19000,"本科",3]]},{"name":"乌兰察布","demand":69,"salary":7500,"jobCount":9,"jobs":[["商务投标专员",7500,"学历不限",36],["高级法务经理",11000,"本科",8],["质量风控专员",5500,"大专",8],["招投标专员",4000,"大专",6],["公司法务助理",8000,"本科",5],["法务主管",8000,"本科",3],["法务经理",9000,"本科",1],["预算员兼投标专员",7000,"大专",1],["法务律师",11500,"本科",1]]},{"name":"通辽","demand":46,"salary":8196,"jobCount":6,"jobs":[["法务专员",11058,"本科",26],["招标代理",5000,"大专",8],["投标资料员",3000,"大专",6],["商务投标专员",5500,"中专/中技",4],["招投标专员",4500,"大专",1],["项目招投标专员",5000,"本科",1]]},{"name":"巴彦淖尔","demand":43,"salary":8942,"jobCount":9,"jobs":[["招标代理专员",6000,"本科",12],["法务经理",17500,"本科",10],["商务投标专员",5000,"大专",8],["招标代理项目经理",9000,"大专",5],["招投标主管",4500,"大专",3],["法务主管",8000,"本科",2],["招标代理项目负责人",9000,"大专",1],["投标主管",6500,"大专",1],["市场部部长",7500,"大专",1]]},{"name":"兴安盟","demand":18,"salary":10750,"jobCount":3,"jobs":[["法务",10000,"大专",12],["招投标经理",4500,"本科",3],["法务经理",20000,"本科",3]]},{"name":"锡林郭勒盟","demand":5,"salary":15800,"jobCount":3,"jobs":[["风险管理部总经理",16000,"本科",3],["童装门店监察",15000,"本科",1],["债权催收经理",16000,"本科",1]]},{"name":"乌海","demand":4,"salary":9500,"jobCount":2,"jobs":[["法务专员",9000,"本科",3],["商务经理（法务方向）",11000,"本科",1]]},{"name":"呼伦贝尔","demand":2,"salary":5500,"jobCount":1,"jobs":[["招标员",5500,"大专",2]]}]},"黑龙江":{"demand":2012,"salary":6888,"cityCount":9,"cities":[{"name":"哈尔滨","demand":1683,"salary":6978,"jobCount":193,"jobs":[["专职律师",8920,"本科",193],["风控专员",8714,"大专",140],["实习律师",2915,"本科",136],["投标专员",4975,"大专",79],["执业律师",10128,"本科",78],["法务助手",7500,"学历不限",60],["法务专员",5861,"学历不限",54],["授薪律师",8390,"本科",50],["招标项目经理",6338,"大专",40],["招投标专员",4135,"大专",37],["市场稽查（五险一金）",7500,"大专",34],["售前标书制作",6500,"大专",32]]},{"name":"齐齐哈尔","demand":112,"salary":3688,"jobCount":9,"jobs":[["实习律师",2443,"本科",53],["律师助理",3500,"大专",35],["律师合伙人（海口所）",7500,"本科",15],["法务专员",4500,"大专",4],["法务",4500,"大专",1],["医疗法律业务专项律师",5500,"本科",1],["工薪律师",9000,"本科",1],["执业律师（派驻海口）",5000,"本科",1],["合伙人律师",6500,"学历不限",1]]},{"name":"牡丹江","demand":105,"salary":10690,"jobCount":23,"jobs":[["公司法务经理/主管（国企）",12250,"本科",14],["风控经理/主管（国企）",14417,"本科",12],["风控专员（退役大学生国企招聘）",4000,"本科",11],["公司法务",4250,"本科",10],["法务部长（内控部长）",10000,"本科",9],["公司法务（农旅国企）",12000,"本科",7],["集团风控法务部长（国企城投）",25000,"本科",6],["集团公司法务（国企）",11500,"本科",4],["投资风控主管",13000,"大专",4],["法务专员",6000,"本科",4],["大宗贸易风控负责人",6500,"本科",4],["公司法务专员",5000,"本科",3]]},{"name":"大庆","demand":85,"salary":4988,"jobCount":14,"jobs":[["招投标专员",4900,"大专",30],["律师助理",3000,"本科",16],["律师和律师助理",4500,"本科",12],["投标专员",6000,"大专",6],["法务专员",8667,"本科",6],["商务投标专员",5000,"高中",4],["投标文员标书文员",4500,"大专",2],["招投标主管",4500,"学历不限",2],["合规稽查员(护肤品+出差+双休)",6000,"大专",2],["投标员文员",4500,"学历不限",1],["集团法务经理",12000,"本科",1],["建筑工程预算员",12000,"本科",1]]},{"name":"绥化","demand":13,"salary":4346,"jobCount":2,"jobs":[["招投标专员",4500,"大专",9],["商务标书专员",4000,"大专",4]]},{"name":"鹤岗","demand":7,"salary":7500,"jobCount":1,"jobs":[["法务专员",7500,"本科",7]]},{"name":"佳木斯","demand":3,"salary":7000,"jobCount":1,"jobs":[["工程招投标专员",7000,"学历不限",3]]},{"name":"七台河","demand":3,"salary":5667,"jobCount":2,"jobs":[["法务",6500,"本科",2],["法务专员",4000,"大专",1]]},{"name":"黑河","demand":1,"salary":8500,"jobCount":1,"jobs":[["公司法务",8500,"本科",1]]}]},"新疆":{"demand":1919,"salary":7697,"cityCount":15,"cities":[{"name":"乌鲁木齐","demand":1473,"salary":7647,"jobCount":174,"jobs":[["律师助理",4613,"本科",172],["法务电催专员",7000,"学历不限",120],["招投标专员",7366,"本科",101],["执业律师",9529,"本科",85],["实习律师",3607,"本科",81],["法务专员",6595,"本科",79],["涉外律师（中亚）",11500,"本科",60],["独立律师",11809,"本科",47],["投标专员",6175,"大专",40],["集团法务岗",8569,"本科",29],["招标助理",6500,"大专",28],["法务",7958,"本科",24]]},{"name":"巴音郭楞","demand":217,"salary":5410,"jobCount":9,"jobs":[["律师助理或实习律师",3500,"本科",110],["专职律师",6000,"学历不限",70],["招投标专员",4500,"大专",16],["法务",12500,"本科",6],["法务专员",11000,"本科",5],["法务（工作地点乌鲁木齐）",16000,"本科",4],["招投标主管",6000,"大专",2],["总法律顾问",40000,"本科",2],["招标代理专员",5500,"本科",2]]},{"name":"昌吉","demand":59,"salary":9686,"jobCount":15,"jobs":[["法务律师",13000,"大专",14],["法务岗",9000,"本科",7],["招标采购岗",8500,"本科",6],["招标代理专员",7500,"大专",5],["招标管理岗",5000,"本科",4],["火电厂-计划物资岗",16500,"大专",4],["医疗器械商务内勤",4500,"大专",4],["企业法务经理",11500,"本科",3],["集团法务总监",12500,"本科",3],["集团审计风控部（法务岗）",9000,"本科",2],["法务专员",6750,"大专",2],["招投标专员",5750,"大专",2]]},{"name":"阿克苏","demand":37,"salary":6824,"jobCount":10,"jobs":[["专职投标员",7500,"大专",10],["工程招投标专员",4889,"大专",9],["工程招投标专员（应届毕业生）",5000,"本科",7],["集团法务经理",11000,"本科",4],["招标代理项目主管",9000,"大专",2],["工程招投标专员（校招）",4500,"本科",1],["风控法务经理",7000,"本科",1],["法务主管（建筑行业）",14500,"本科",1],["招标代理员",4500,"大专",1],["招标代理专员",6000,"大专",1]]},{"name":"伊犁","demand":31,"salary":15984,"jobCount":6,"jobs":[["法务经理",20000,"本科",11],["法务总监/经理",20000,"本科",11],["法务专员",6900,"本科",5],["工程招投标专员",6000,"学历不限",2],["公司法务",4000,"大专",1],["招标公司项目经理",5000,"大专",1]]},{"name":"哈密","demand":23,"salary":16022,"jobCount":11,"jobs":[["风险合规经理/主管",14500,"本科",7],["法务专员/法务主管",6000,"本科",3],["风险合规部经理",22333,"本科",3],["法务经理",17500,"本科",2],["内控主管",17750,"本科",2],["风险合规总监",30000,"本科",1],["集团法务经理",15000,"本科",1],["法务助理",9000,"硕士",1],["风险合规经理",25000,"本科",1],["合规主管",20000,"本科",1],["施工单位预算员",12500,"大专",1]]},{"name":"喀什","demand":21,"salary":5238,"jobCount":4,"jobs":[["招标专员文员",5000,"大专",6],["招投标文员",5000,"大专",6],["招标文员",6000,"大专",5],["法务专员",5000,"本科",4]]},{"name":"和田","demand":19,"salary":10184,"jobCount":2,"jobs":[["法务专员",9000,"本科",14],["法务兼监审",13500,"大专",5]]},{"name":"克拉玛依","demand":12,"salary":9167,"jobCount":3,"jobs":[["法务审计专员",9700,"本科",10],["法务专员",7000,"本科",1],["采购商务专员",6000,"大专",1]]},{"name":"石河子市","demand":10,"salary":8000,"jobCount":1,"jobs":[["工程招投标专员",8000,"本科",10]]},{"name":"塔城","demand":8,"salary":8000,"jobCount":1,"jobs":[["法务专员",8000,"本科",8]]},{"name":"图木舒克市","demand":3,"salary":10667,"jobCount":3,"jobs":[["授薪律师",12000,"本科",1],["风控管理岗",10500,"本科",1],["法律合规岗（投资方向）",9500,"本科",1]]},{"name":"五家渠市","demand":3,"salary":8333,"jobCount":3,"jobs":[["法务专员",8500,"本科",1],["招投标专员",7500,"大专",1],["法务审计",9000,"本科",1]]},{"name":"吐鲁番","demand":2,"salary":10500,"jobCount":1,"jobs":[["法务专员",10500,"本科",2]]},{"name":"新星市","demand":1,"salary":10000,"jobCount":1,"jobs":[["法务",10000,"本科",1]]}]},"贵州":{"demand":1181,"salary":9112,"cityCount":9,"cities":[{"name":"贵阳","demand":986,"salary":8549,"jobCount":151,"jobs":[["风控专员",8231,"中专/中技",236],["法律顾问销售+五险+双休",7500,"学历不限",65],["风控经理",17000,"本科",64],["法务专员",6468,"本科",31],["招投标专员",5724,"大专",29],["专职律师",8987,"本科",26],["实习律师",3981,"本科",26],["法律顾问+双休+五险",12000,"学历不限",20],["（昆明）标书制作",8000,"大专",20],["标书制作专员",8176,"大专",17],["标书专员",5794,"大专",17],["集团法务专员/经理",7000,"本科",14]]},{"name":"黔西南","demand":54,"salary":15472,"jobCount":8,"jobs":[["集团法务总监",24643,"本科",14],["法务专员",4000,"本科",10],["法务主管/经理助理",12500,"本科",10],["风险法务经理",11000,"本科",8],["法务经理/主管",12500,"本科",5],["集团法务总监/经理（贵州）",20000,"本科",4],["集团法务负责人（贵州）",40000,"本科",2],["集团法务经理",15000,"本科",1]]},{"name":"铜仁","demand":54,"salary":8343,"jobCount":3,"jobs":[["外勤法律顾问",8500,"学历不限",50],["法务专员",6333,"本科",3],["谈案专员",6500,"大专",1]]},{"name":"遵义","demand":32,"salary":7798,"jobCount":11,"jobs":[["专职律师",13636,"本科",11],["法务销售代表",2500,"大专",5],["法律顾问",4500,"学历不限",3],["社会稳定风险评估报告技术员（昆明）",6000,"大专",3],["公司法务",8000,"本科",2],["投标预算员",5500,"本科",2],["招投标专员",5500,"本科",2],["投标专员",4500,"大专",1],["法律销售顾问/商务谈判",2500,"学历不限",1],["市场督查",10500,"本科",1],["见习生",40,"本科",1]]},{"name":"六盘水","demand":17,"salary":22412,"jobCount":5,"jobs":[["集团法务总监",30000,"本科",8],["招采工程师",10000,"本科",4],["法务律师",30000,"本科",3],["公司法务",7500,"本科",1],["行政法务专员",3500,"本科",1]]},{"name":"毕节","demand":14,"salary":10786,"jobCount":5,"jobs":[["律师",11929,"学历不限",7],["招聘案件处置律师",10500,"学历不限",4],["商务投标专员",6500,"大专",1],["集团法务经理",12000,"本科",1],["公司法务",7000,"硕士",1]]},{"name":"黔南","demand":11,"salary":13273,"jobCount":5,"jobs":[["专职律师",15000,"本科",7],["法务经理",11500,"本科",1],["集团工程法务主管/经理",11500,"本科",1],["投标经理（新能源光伏风电）",13000,"本科",1],["钢结构招投标员",5000,"大专",1]]},{"name":"黔东南","demand":7,"salary":7500,"jobCount":1,"jobs":[["公司法务",7500,"本科",7]]},{"name":"安顺","demand":6,"salary":11000,"jobCount":4,"jobs":[["法务经理",12667,"本科",3],["法务主管",11500,"本科",1],["法务（党建）专员",11500,"本科",1],["招投标资料员",5000,"大专",1]]}]},"海南":{"demand":1153,"salary":9934,"cityCount":10,"cities":[{"name":"海口","demand":749,"salary":10862,"jobCount":107,"jobs":[["提成律师",10500,"本科",160],["实习律师",3817,"硕士",52],["律师、实习律师",16500,"本科",50],["法务总监",28274,"本科",42],["独立律师",18217,"本科",30],["法务主管",8207,"大专",29],["投标专员",4560,"中专/中技",25],["授薪律师",12020,"本科",25],["专职律师",17478,"本科",23],["督办专员",4500,"大专",20],["法务专员（新增业务，储备人员）",5500,"本科",14],["招标专员",5458,"本科",12]]},{"name":"三亚","demand":333,"salary":7965,"jobCount":30,"jobs":[["品质监察专员",7500,"大专",140],["法务专员",7214,"本科",63],["监察",6000,"本科",14],["执业律师",12821,"本科",14],["法务助理",4500,"本科",13],["法务部经理",13727,"本科",11],["合规专员",4500,"本科",9],["律师助理",3389,"本科",9],["法务主管/专业经理",13500,"本科",8],["法务主管",7000,"本科",7],["法务顾问",7500,"大专",6],["专职执业律师",12500,"本科",5]]},{"name":"澄迈","demand":27,"salary":8870,"jobCount":5,"jobs":[["实习律师/律师助理",5357,"本科",14],["法务主管",13667,"大专",6],["民事案件合作律师",12500,"本科",4],["授薪/执业律师",13500,"本科",2],["招标代理项目经理",5500,"本科",1]]},{"name":"儋州","demand":14,"salary":11429,"jobCount":2,"jobs":[["交通事故痕迹鉴定人",14000,"大专",10],["交通事故痕迹鉴定助理",5000,"本科",4]]},{"name":"乐东","demand":10,"salary":5400,"jobCount":3,"jobs":[["配资保房交付助理",5500,"大专",4],["参与非诉讼业务律师助理",5333,"大专",3],["配资保房助理",5333,"大专",3]]},{"name":"洋浦市/洋浦经济开发区","demand":9,"salary":8944,"jobCount":5,"jobs":[["法务经理",12500,"本科",3],["法务专员",8000,"本科",2],["法务风控部-法务风控经理",8500,"本科",2],["投标岗",5000,"大专",1],["投标专员",5000,"大专",1]]},{"name":"陵水","demand":5,"salary":13500,"jobCount":2,"jobs":[["法务经理",14375,"大专",4],["法务经理/主管",10000,"大专",1]]},{"name":"琼海","demand":4,"salary":12000,"jobCount":1,"jobs":[["法务专员",12000,"本科",4]]},{"name":"文昌","demand":1,"salary":7000,"jobCount":1,"jobs":[["技术标书专员",7000,"学历不限",1]]},{"name":"三沙","demand":1,"salary":9000,"jobCount":1,"jobs":[["招投标主管",9000,"大专",1]]}]},"云南":{"demand":1091,"salary":10485,"cityCount":10,"cities":[{"name":"昆明","demand":1046,"salary":10616,"jobCount":138,"jobs":[["律师",14776,"本科",174],["实习律师",3868,"本科",72],["律师事务所律师",22500,"本科",70],["授薪律师",11510,"本科",52],["执业律师",11413,"本科",46],["律师助理",6542,"大专",36],["法务专员",5020,"大专",25],["专职律师",8375,"本科",24],["招标代理项目经理",12875,"大专",20],["车辆安全技术检验鉴定助理",6000,"本科",20],["招投标专员",5425,"本科",20],["法律销售顾问",9500,"高中",20]]},{"name":"文山","demand":17,"salary":6529,"jobCount":2,"jobs":[["风险控制部专员（法务）",6000,"本科",14],["风险控制部副部长",9000,"本科",3]]},{"name":"昭通","demand":11,"salary":5682,"jobCount":3,"jobs":[["人事/法务专员",4000,"学历不限",4],["合同法务专员",5000,"大专",4],["法务专员",8833,"高中",3]]},{"name":"红河","demand":4,"salary":4500,"jobCount":2,"jobs":[["法务助理",4500,"本科",3],["法务专员/助理（蒙自）",4500,"本科",1]]},{"name":"玉溪","demand":4,"salary":20000,"jobCount":1,"jobs":[["法务总监",20000,"本科",4]]},{"name":"德宏","demand":2,"salary":6750,"jobCount":2,"jobs":[["企业法务专员",9000,"本科",1],["公司法务",4500,"本科",1]]},{"name":"曲靖","demand":2,"salary":6500,"jobCount":1,"jobs":[["公司法务",6500,"本科",2]]},{"name":"保山","demand":2,"salary":5000,"jobCount":1,"jobs":[["酒店稽核会计",5000,"大专",2]]},{"name":"楚雄","demand":2,"salary":6250,"jobCount":2,"jobs":[["法务专员/高级法务专员",7500,"本科",1],["招投标资料员",5000,"大专",1]]},{"name":"西双版纳","demand":1,"salary":15000,"jobCount":1,"jobs":[["执业律师",15000,"本科",1]]}]},"广西":{"demand":931,"salary":6966,"cityCount":10,"cities":[{"name":"南宁","demand":799,"salary":6833,"jobCount":68,"jobs":[["实习律师",4922,"本科",212],["授薪律师",8974,"本科",194],["司法鉴定人助理（南宁）",6000,"本科",48],["司法鉴定人（南宁）",11500,"本科",39],["专职授薪律师（北海市）",5000,"本科",30],["司法鉴定人助理（梧州）",6000,"本科",30],["律师助理（北海市）",2500,"本科",22],["实习律师（防城港市）",4500,"本科",15],["实习律师（北海市）",3500,"本科",14],["实习生（北海市）",1500,"本科",12],["专职律师",6500,"本科",10],["专职律师（北京市）",15000,"本科",10]]},{"name":"桂林","demand":50,"salary":7850,"jobCount":3,"jobs":[["公司法务",8352,"本科",27],["标书专员",4769,"大专",13],["律师",10500,"大专",10]]},{"name":"柳州","demand":36,"salary":8833,"jobCount":9,"jobs":[["法务专员",7583,"本科",18],["法务主管",10000,"本科",7],["司法鉴定人（兼职）",12000,"本科",3],["信审法务专员",7500,"本科",2],["风控经理",13500,"本科",2],["招投标专员",6500,"本科",1],["法务主管/经理",9000,"本科",1],["法律顾问",7500,"大专",1],["准入专员",10500,"本科",1]]},{"name":"玉林","demand":14,"salary":6393,"jobCount":1,"jobs":[["法务专员",6393,"本科",14]]},{"name":"钦州","demand":10,"salary":6750,"jobCount":2,"jobs":[["法务专员",4688,"本科",8],["风控岗（需基金从业资格证）",15000,"本科",2]]},{"name":"防城港","demand":10,"salary":9000,"jobCount":1,"jobs":[["内控专员",9000,"本科",10]]},{"name":"百色","demand":4,"salary":4500,"jobCount":2,"jobs":[["销售专员",4500,"大专",3],["立案专员",4500,"大专",1]]},{"name":"河池","demand":4,"salary":5000,"jobCount":2,"jobs":[["法医临床鉴定人",5000,"本科",3],["法医物证鉴定人",5000,"本科",1]]},{"name":"崇左","demand":3,"salary":8500,"jobCount":2,"jobs":[["高级法务专员",8500,"本科",2],["安装招采工程师",8500,"大专",1]]},{"name":"梧州","demand":1,"salary":4500,"jobCount":1,"jobs":[["法务专员",4500,"本科",1]]}]},"甘肃":{"demand":527,"salary":6222,"cityCount":8,"cities":[{"name":"兰州","demand":420,"salary":5906,"jobCount":71,"jobs":[["风控专员",7500,"本科",50],["法务主管",6828,"本科",32],["投标经理",6000,"本科",31],["律师助理",2548,"本科",21],["招投标专员",4222,"本科",18],["标书制作专员",4500,"大专",16],["企业法务专员",5750,"本科",16],["法律顾问",7531,"大专",16],["招标专员",3500,"大专",15],["招标代理专员",4167,"大专",15],["投标专员",5233,"本科",15],["法务专员",6571,"本科",14]]},{"name":"陇南","demand":61,"salary":7008,"jobCount":2,"jobs":[["证券法务专员",6500,"本科",60],["法务总监",37500,"本科",1]]},{"name":"白银","demand":22,"salary":9000,"jobCount":5,"jobs":[["公司法务",9000,"本科",18],["法务专员",9500,"本科",1],["高级法务专员",9500,"硕士",1],["法务",9500,"硕士",1],["法务专员/经理",7500,"本科",1]]},{"name":"酒泉","demand":10,"salary":10150,"jobCount":5,"jobs":[["法务专员",12500,"本科",4],["风控经理",12500,"本科",2],["商务部内勤（招投标方向）",4500,"大专",2],["项目招投标专员",4500,"大专",1],["风控高级经理",13000,"本科",1]]},{"name":"天水","demand":8,"salary":4500,"jobCount":1,"jobs":[["法务专员",4500,"本科",8]]},{"name":"庆阳","demand":4,"salary":5875,"jobCount":2,"jobs":[["招标专员资料员",5500,"本科",3],["法务专员/助理",7000,"本科",1]]},{"name":"临夏","demand":1,"salary":7500,"jobCount":1,"jobs":[["工程招投标主管",7500,"本科",1]]},{"name":"金昌","demand":1,"salary":4500,"jobCount":1,"jobs":[["工程招投标专员",4500,"大专",1]]}]},"宁夏":{"demand":348,"salary":6583,"cityCount":4,"cities":[{"name":"银川","demand":339,"salary":6544,"jobCount":55,"jobs":[["招投标专员",5470,"大专",50],["投标专员",5097,"大专",36],["律师助理(包头昆区 案源拓展)",7500,"学历不限",24],["商务投标专员",5781,"大专",16],["实习律师或律师助理",4500,"本科",16],["法务专员",6269,"本科",13],["律师助理",4000,"本科",11],["法务主管",7100,"本科",10],["标书制作专员",5050,"本科",10],["法律秘书",3500,"本科",10],["合规专员",5000,"本科",9],["合规稽核员",4500,"本科",9]]},{"name":"中卫","demand":5,"salary":8400,"jobCount":4,"jobs":[["法务专员",7000,"本科",2],["法务岗",9500,"本科",1],["招聘投标专员",5000,"大专",1],["工程招投标经理",13500,"本科",1]]},{"name":"固原","demand":3,"salary":7833,"jobCount":2,"jobs":[["法务经理",9000,"本科",2],["招投标专员",5500,"本科",1]]},{"name":"吴忠","demand":1,"salary":7000,"jobCount":1,"jobs":[["法务专员",7000,"本科",1]]}]},"青海":{"demand":258,"salary":7397,"cityCount":3,"cities":[{"name":"西宁","demand":234,"salary":7197,"jobCount":23,"jobs":[["法务专员",7769,"硕士",54],["实习律师",2674,"本科",43],["标书—双休-七险一金",9000,"大专",23],["律师助理",4500,"本科",15],["提成律师",12500,"本科",15],["专职律师",9643,"本科",14],["执业律师",8125,"本科",12],["法务助理（西宁）",6500,"本科",10],["招投标主管",7500,"大专",8],["银川万科·法务风控",18214,"本科",7],["助理（执业律师）",6000,"学历不限",6],["反洗钱岗",6000,"本科",5]]},{"name":"海西","demand":20,"salary":10200,"jobCount":3,"jobs":[["（西宁）法务风控合规岗",10000,"硕士",18],["企业法务总监",17500,"本科",1],["风险合规专员",6500,"本科",1]]},{"name":"海东","demand":4,"salary":5125,"jobCount":1,"jobs":[["法务专员",5125,"本科",4]]}]},"西藏":{"demand":166,"salary":10099,"cityCount":4,"cities":[{"name":"拉萨","demand":125,"salary":10244,"jobCount":20,"jobs":[["招投标专员",6694,"本科",31],["招投标技术员",11000,"本科",22],["行政内勤",7000,"大专",9],["经营经理",24500,"本科",8],["综合文员",8500,"学历不限",6],["招标专员",6000,"大专",6],["法务",11500,"本科",5],["合规内控部负责人",11000,"本科",5],["保供业务副经理",14500,"本科",5],["法务专员",10600,"本科",5],["集团法务专员",12000,"本科",4],["标书制作员 文员",7500,"本科",4]]},{"name":"日喀则","demand":33,"salary":10091,"jobCount":6,"jobs":[["投标文件制作（客服部）",8000,"大专",11],["解剖助理",9000,"学历不限",9],["交通事故痕迹司法鉴定人",12000,"大专",5],["监察专员",20000,"本科",4],["标书制作专员",5000,"本科",3],["投标专员",9000,"大专",1]]},{"name":"昌都","demand":5,"salary":7200,"jobCount":2,"jobs":[["企业法务专员",7000,"大专",3],["招投标专员",7500,"大专",2]]},{"name":"林芝","demand":3,"salary":9000,"jobCount":2,"jobs":[["集团法务专员",7500,"本科",2],["标书制作专员",12000,"学历不限",1]]}]}};
+const LAW_TOTAL_DEMAND = Object.values(REGION_DATA).reduce((s,d)=>s+d.demand,0);
+
+const lawDirs = Object.keys(REGION_DATA);
+const indexListLaw = document.getElementById('indexListLaw');
+lawDirs.forEach((name, i) => {
+  const li = document.createElement('li');
+  const btn = document.createElement('button');
+  btn.className = 'index-item';
+  btn.dataset.name = name;
+  btn.innerHTML = `<span class="idx-code">${String(i+1).padStart(2,'0')}</span><span>${name}</span>`;
+  btn.addEventListener('click', () => renderLaw(name));
+  li.appendChild(btn);
+  indexListLaw.appendChild(li);
+});
+
+function setActiveLaw(name){
+  indexListLaw.querySelectorAll('.index-item').forEach(el=>{
+    el.classList.toggle('active', el.dataset.name === name);
+  });
+}
+
+function playLawRecordEnter(){
+  const record = document.querySelector('#page-law .record');
+  record.classList.remove('anim-in');
+  void record.offsetWidth;
+  record.classList.add('anim-in');
+}
+
+// 渲染选中城市的岗位薪酬明细（岗位 · 学历 · 平均月薪 · 招聘人数）
+function renderLawJobs(prov, cityIdx){
+  const rec = REGION_DATA[prov];
+  const city = rec.cities[cityIdx];
+  document.querySelectorAll('#lawCityList .gov-row').forEach((el,i)=>el.classList.toggle('sel', i===cityIdx));
+
+  const list = document.getElementById('lawJobList');
+  const empty = document.getElementById('lawJobEmpty');
+  document.getElementById('lawJobNote').textContent =
+    `${city.name} · 前 ${city.jobs.length} 岗位（共 ${city.jobCount} 类）`;
+
+  if(!city.jobs.length){ list.innerHTML=''; empty.style.display='block'; return; }
+  empty.style.display='none';
+  const max = Math.max.apply(null, city.jobs.map(j=>j[3]));
+  list.innerHTML = city.jobs.map(([title,sal,edu,dem])=>{
+    const pct = (dem/max*100).toFixed(1);
+    return `<li class="job-row">
+      <span class="jname" title="${title}">${title}</span>
+      <span class="jedu">${edu}</span>
+      <span class="jsal">¥${sal.toLocaleString()}</span>
+      <span class="jdem"><span class="jbar" data-pct="${pct}" style="width:0%"></span><span class="jcount" data-target="${dem}">0</span></span>
+    </li>`;
+  }).join('');
+  requestAnimationFrame(()=>{
+    list.querySelectorAll('.jbar').forEach((el,i)=>setTimeout(()=>{ el.style.width = el.dataset.pct + '%'; }, i*25));
+    list.querySelectorAll('.jcount').forEach((el,i)=>{
+      const t = Number(el.dataset.target);
+      setTimeout(()=>animateNumber(el, 0, t, 600), i*25);
+    });
+  });
+}
+
+function renderLaw(name){
+  const rec = REGION_DATA[name];
+  setActiveLaw(name);
+  playLawRecordEnter();
+
+  document.getElementById('lawTitle').textContent = name;
+  document.getElementById('lawTag').textContent = '省域职业薪酬档案 · 智联招聘';
+  const sealEl = document.getElementById('lawSeal');
+  sealEl.textContent = name.length <= 2 ? name : name.slice(0,2);
+  sealEl.style.fontSize = (name.length <= 2 ? 19 : 16) + 'px';
+
+  // stats strip
+  const sharePct = (rec.demand / LAW_TOTAL_DEMAND * 100).toFixed(1);
+  const statsEl = document.getElementById('lawStats');
+  statsEl.innerHTML =
+    `<div class="gov-stat"><div class="k">岗位需求（人）</div><div class="v" data-target="${rec.demand}">0</div></div>` +
+    `<div class="gov-stat"><div class="k">平均月薪（元）</div><div class="v" data-target="${rec.salary}">0</div></div>` +
+    `<div class="gov-stat"><div class="k">覆盖城市</div><div class="v" data-target="${rec.cityCount}">0</div></div>` +
+    `<div class="gov-stat ratio"><div class="k">占全国需求</div><div class="v">${sharePct}%</div></div>`;
+  requestAnimationFrame(()=>{
+    statsEl.querySelectorAll('.v[data-target]').forEach((el,i)=>{
+      const target = Number(el.dataset.target);
+      setTimeout(()=>animateNumber(el, 0, target, 700), i*60);
+    });
+  });
+
+  // city ranking (clickable) — demand bar + average salary sub-badge
+  const cityMax = rec.cities[0].demand;
+  document.getElementById('lawCityCount').textContent = `共 ${rec.cityCount} 城 · 点击查看岗位`;
+  const cityList = document.getElementById('lawCityList');
+  cityList.innerHTML = rec.cities.map((c,i)=>`
+    <li class="gov-row${i===0?' sel':''}" data-i="${i}">
+      <span class="rank ${i<3?'top':''}">${String(i+1).padStart(2,'0')}</span>
+      <span class="name" title="${c.name}">${c.name}</span>
+      <span class="bartrack"><span class="barfill" data-pct="${(c.demand/cityMax*100).toFixed(1)}" style="width:0%"></span></span>
+      <span class="count" data-target="${c.demand}">0<span class="sub">¥${c.salary.toLocaleString()}</span></span>
+    </li>`).join('');
+  animateGovCensusList(cityList);
+  cityList.querySelectorAll('.gov-row').forEach(row=>{
+    row.addEventListener('click', ()=> renderLawJobs(name, +row.dataset.i));
+  });
+
+  // default detail = top city
+  renderLawJobs(name, 0);
+}
+
+renderLaw(lawDirs[0]);
+
+/* ================= Tab switching ================= */
+const tabIndustry = document.getElementById('tabIndustry');
+const tabSalary = document.getElementById('tabSalary');
+const tabGov = document.getElementById('tabGov');
+const tabPos = document.getElementById('tabPos');
+const tabLaw = document.getElementById('tabLaw');
+const pageIndustry = document.getElementById('page-industry');
+const pageSalary = document.getElementById('page-salary');
+const pageGov = document.getElementById('page-gov');
+const pagePos = document.getElementById('page-pos');
+const pageLaw = document.getElementById('page-law');
+
+const PAGES = {industry:pageIndustry, salary:pageSalary, gov:pageGov, pos:pagePos, law:pageLaw};
+const TABS = {industry:tabIndustry, salary:tabSalary, gov:tabGov, pos:tabPos, law:tabLaw};
+let currentPage = 'industry';
+
+function switchPage(page){
+  if(page === currentPage) return;
+  const showEl = PAGES[page];
+  const hideEl = PAGES[currentPage];
+
+  hideEl.classList.add('fade-out');
+  setTimeout(() => { hideEl.classList.add('hidden'); }, 320);
+
+  showEl.classList.remove('hidden');
+  showEl.classList.add('fade-out');
+  void showEl.offsetWidth; // force reflow so the transition below actually runs
+  requestAnimationFrame(() => {
+    showEl.classList.remove('fade-out');
+    if(page === 'salary') requestAnimationFrame(animateCurveDraw); // salary page just became visible: (re)play the curve draw-in
+  });
+
+  Object.keys(TABS).forEach(k => TABS[k].classList.toggle('active', k === page));
+  currentPage = page;
+}
+tabIndustry.addEventListener('click', () => switchPage('industry'));
+tabSalary.addEventListener('click', () => switchPage('salary'));
+tabGov.addEventListener('click', () => switchPage('gov'));
+tabPos.addEventListener('click', () => switchPage('pos'));
+tabLaw.addEventListener('click', () => switchPage('law'));
+</script>
+</body>
+</html>
